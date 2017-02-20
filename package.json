@@ -1,0 +1,39 @@
+{
+  "name": "pkg-ok",
+  "version": "1.0.0",
+  "description": "Checks package.json main and bin paths",
+  "main": "index.js",
+  "bin": "bin.js",
+  "scripts": {
+    "test": "node test && standard",
+    "prepublish": "npm test && node ./bin",
+    "precommit": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/typicode/pkg-ok.git"
+  },
+  "keywords": [
+    "package",
+    "main",
+    "bin",
+    "path",
+    "exist",
+    "test"
+  ],
+  "author": "typicode <typicode@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/typicode/pkg-ok/issues"
+  },
+  "homepage": "https://github.com/typicode/pkg-ok#readme",
+  "devDependencies": {
+    "expect": "^1.20.2",
+    "husky": "^0.13.1",
+    "mock-fs": "^4.0.0",
+    "standard": "^8.6.0"
+  },
+  "engines" : {
+    "node": ">= 4"
+  } 
+}
