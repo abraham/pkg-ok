@@ -1,6 +1,6 @@
 {
   "name": "pkg-ok",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Checks package.json main and bin paths",
   "main": "index.js",
   "bin": "bin.js",
@@ -33,7 +33,7 @@
     "mock-fs": "^4.0.0",
     "standard": "^8.6.0"
   },
-  "engines" : {
+  "engines": {
     "node": ">= 4"
-  } 
+  }
 }
