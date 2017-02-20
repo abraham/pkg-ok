@@ -18,11 +18,13 @@ module.exports = function pkgOk (dir) {
   // https://docs.npmjs.com/files/package.json#bin
   if (pkg.bin) {
     if (pkg.bin instanceof Object) {
-      for (let key in pkg.bin) {
-        if (doesntExist(dir, pkg.bin[key])) {
-          errors.push(`bin.${key}`)
-        }
-      }
+      Object
+        .keys(pkg.bin)
+        .forEach(key => {
+          if (doesntExist(dir, pkg.bin[key])) {
+            errors.push(`bin.${key}`)
+          }
+        })
     } else {
       if (doesntExist(dir, pkg.bin)) {
         errors.push('bin')
