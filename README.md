@@ -1,6 +1,6 @@
 # pkg-ok [![Build Status](https://travis-ci.org/typicode/pkg-ok.svg?branch=master)](https://travis-ci.org/typicode/pkg-ok)
 
-> Prevents publishing a module with bad paths :scream:
+> Prevents publishing a module with bad paths :ok_hand:
 
 Tests package.json `main` and `bin` paths (zero config and dependencies).
 
