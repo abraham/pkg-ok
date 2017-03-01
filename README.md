@@ -1,8 +1,10 @@
-# pkg-ok [![Build Status](https://travis-ci.org/typicode/pkg-ok.svg?branch=master)](https://travis-ci.org/typicode/pkg-ok) [![npm](https://img.shields.io/npm/v/pkg-ok.svg)](pkg-ok)
+# pkg-ok [![Build Status](https://travis-ci.org/typicode/pkg-ok.svg?branch=master)](https://travis-ci.org/typicode/pkg-ok) [![npm](https://img.shields.io/npm/v/pkg-ok.svg)](https://www.npmjs.com/package/pkg-ok)
 
 > Prevents publishing a module with bad paths :ok_hand:
 
-Tests package.json `main` and `bin` paths (zero config and dependencies).
+Tests package.json `main` and `bin` paths (zero config and dependencies). 
+
+`pkg-ok` is used in [json-server](https://github.com/typicode/json-server), [hotel](https://github.com/typicode/hotel) and [lowdb](https://github.com/typicode/lowdb).
 
 ## Usage
 
