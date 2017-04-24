@@ -5,7 +5,29 @@ function doesntExist (dir, file) {
   return !fs.existsSync(path.join(dir, file))
 }
 
-module.exports = function pkgOk (dir) {
+function checkField (pkg, field, dir) {
+  const errors = []
+
+  if (pkg[field]) {
+    if (pkg[field] instanceof Object) {
+      Object
+        .keys(pkg[field])
+        .forEach(key => {
+          if (doesntExist(dir, pkg[field][key])) {
+            errors.push(`${field}.${key}`)
+          }
+        })
+    } else {
+      if (doesntExist(dir, pkg[field])) {
+        errors.push(field)
+      }
+    }
+  }
+
+  return errors
+}
+
+module.exports = function pkgOk (dir, otherFields = []) {
   const errors = []
   const pkgPath = path.join(dir, 'package.json')
   const pkg = JSON.parse(fs.readFileSync(pkgPath))
@@ -16,21 +38,14 @@ module.exports = function pkgOk (dir) {
   }
 
   // https://docs.npmjs.com/files/package.json#bin
-  if (pkg.bin) {
-    if (pkg.bin instanceof Object) {
-      Object
-        .keys(pkg.bin)
-        .forEach(key => {
-          if (doesntExist(dir, pkg.bin[key])) {
-            errors.push(`bin.${key}`)
-          }
-        })
-    } else {
-      if (doesntExist(dir, pkg.bin)) {
-        errors.push('bin')
-      }
-    }
-  }
+  checkField(pkg, 'bin', dir)
+    .forEach(error => errors.push(error))
+
+  otherFields
+    .forEach(field => {
+      checkField(pkg, field, dir)
+        .forEach(error => errors.push(error))
+    })
 
   return errors
 }
