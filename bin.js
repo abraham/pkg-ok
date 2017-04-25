@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const pkgOk = require('./')
-
-const errors = pkgOk(process.cwd())
+const otherFields = process.argv.slice(2)
+const errors = pkgOk(process.cwd(), otherFields)
 
 if (errors.length) {
   errors.forEach(error => {
@@ -10,4 +10,3 @@ if (errors.length) {
 
   process.exit(1)
 }
-

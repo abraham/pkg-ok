@@ -15,6 +15,15 @@ mock({
       X: 'unknown.js',
       Y: 'unknown.js'
     }
+  }),
+  '/C/package.json': JSON.stringify({
+    module: 'unknown.js'
+  }),
+  '/D/package.json': JSON.stringify({
+    foo: {
+      bar: 'bar',
+      baz: 'baz'
+    }
   })
 })
 
@@ -26,4 +35,13 @@ expect(pkgOk(path.join('/A'))).toEqual([
 expect(pkgOk(path.join('/B'))).toEqual([
   'bin.X',
   'bin.Y'
+])
+
+expect(pkgOk(path.join('/C'), [ 'module' ])).toEqual([
+  'module'
+])
+
+expect(pkgOk(path.join('/D'), [ 'foo' ])).toEqual([
+  'foo.bar',
+  'foo.baz'
 ])
