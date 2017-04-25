@@ -27,7 +27,7 @@ function checkField (pkg, field, dir) {
   return errors
 }
 
-module.exports = function pkgOk (dir, otherFields = []) {
+module.exports = function pkgOk (dir, otherFields) {
   const errors = []
   const pkgPath = path.join(dir, 'package.json')
   const pkg = JSON.parse(fs.readFileSync(pkgPath))
@@ -38,14 +38,12 @@ module.exports = function pkgOk (dir, otherFields = []) {
   }
 
   // https://docs.npmjs.com/files/package.json#bin
-  checkField(pkg, 'bin', dir)
-    .forEach(error => errors.push(error))
+  const fields = ['bin'].concat(otherFields || [])
 
-  otherFields
-    .forEach(field => {
-      checkField(pkg, field, dir)
-        .forEach(error => errors.push(error))
-    })
+  // Check fields and add errors to the errors array
+  fields.forEach(field => {
+    checkField(pkg, field, dir).forEach(error => errors.push(error))
+  })
 
   return errors
 }
