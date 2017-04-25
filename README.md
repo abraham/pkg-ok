@@ -2,7 +2,7 @@
 
 > Prevents publishing a module with bad paths :ok_hand:
 
-Tests package.json `main` and `bin` paths (zero config and dependencies).
+Do you test everything in your library? Do you test your package.json `main` and `bin` paths? `pkg-ok` can test them for you :)
 
 `pkg-ok` is used in [json-server](https://github.com/typicode/json-server), [hotel](https://github.com/typicode/hotel) and [lowdb](https://github.com/typicode/lowdb).
 
@@ -27,23 +27,7 @@ npm publish
 # Error package.json > main path doesn't exist
 ```
 
-## Other fields support
-
-```js
-{
-  "main": "doesnt/exist.js",
-  "module": "doesnt/exist.js",
-  "scripts": {
-    "prepublish": "pkg-ok module typings"
-  }
-}
-```
-
-```sh
-npm publish
-# Error package.json > main path doesn't exist
-# Error package.json > module path doesn't exist
-```
+For non-standards fields like `module`, `typings`, ... you can pass them as arguments to `pkg-ok` and it will check them as well (i.e `pkg-ok module`)
 
 ## License
 
