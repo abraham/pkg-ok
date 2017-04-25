@@ -2,9 +2,10 @@
 
 > Prevents publishing a module with bad paths :ok_hand:
 
-Do you test your `package.json` `main` and `bin` paths? `pkg-ok` checks them and fails if there's a bad path.
+Do you test your `package.json` `main` and `bin` paths?<br>
+pkg-ok checks them and fails if there's a bad path.
 
-`pkg-ok` is used in [json-server](https://github.com/typicode/json-server), [hotel](https://github.com/typicode/hotel) and [lowdb](https://github.com/typicode/lowdb).
+Used in [json-server](https://github.com/typicode/json-server), [hotel](https://github.com/typicode/hotel) and [lowdb](https://github.com/typicode/lowdb).
 
 ## Usage
 
