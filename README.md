@@ -24,7 +24,7 @@ npm install pkg-ok --save-dev
 {
   "main": "doesnt/exist.js"
   "scripts": {
-    "prepublish": "pkg-ok"
+    "prepublishOnly": "pkg-ok"
   }
 }
 ```
