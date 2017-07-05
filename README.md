@@ -3,7 +3,7 @@
 > Prevents publishing a module with bad paths :ok_hand:
 
 Do you test your package.json `main` and `bin` paths?<br>
-pkg-ok checks them and fails if there's a bad path.
+`pkg-ok` checks them and fails if there's a bad path.
 
 Used in
 
