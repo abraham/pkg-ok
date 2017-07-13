@@ -11,7 +11,7 @@ Used in
 * [hotel](https://github.com/typicode/hotel)
 * [lowdb](https://github.com/typicode/lowdb)
 * [react-fake-props](https://github.com/typicode/react-fake-props)
-* ...
+* ... and [other](https://libraries.io/npm/pkg-ok/dependent-repositories) awesome projects
 
 ## Usage
 
