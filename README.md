@@ -4,14 +4,6 @@
 
 Because it happened to me more than I'd like to admit 😅, `pkg-ok` checks `main` and `bin` paths and prevents publishing if there's a bad path.
 
-__Used in:__
-
-* [json-server](https://github.com/typicode/json-server)
-* [hotel](https://github.com/typicode/hotel)
-* [lowdb](https://github.com/typicode/lowdb)
-* [react-fake-props](https://github.com/typicode/react-fake-props)
-* ... and [other](https://libraries.io/npm/pkg-ok/dependent-repositories) awesome projects
-
 ## Usage
 
 ```sh
@@ -34,6 +26,14 @@ npm publish
 ```
 
 For non-standard fields like `module`, `es2015`, `typings`, ... you can pass them as arguments to `pkg-ok` and it will check them as well (e.g. `pkg-ok module`)
+
+__Used in:__
+
+* [json-server](https://github.com/typicode/json-server)
+* [hotel](https://github.com/typicode/hotel)
+* [lowdb](https://github.com/typicode/lowdb)
+* [react-fake-props](https://github.com/typicode/react-fake-props)
+* ... and [other](https://libraries.io/npm/pkg-ok/dependent-repositories) awesome projects
 
 ## License
 
