@@ -4,7 +4,7 @@
 
 Because it happened to me more than I'd like to admit 😅, `pkg-ok` checks `main` and `bin` paths and prevents publishing if there's a bad path.
 
-Used in:
+__Used in:__
 
 * [json-server](https://github.com/typicode/json-server)
 * [hotel](https://github.com/typicode/hotel)
