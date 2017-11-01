@@ -1,11 +1,10 @@
 # pkg-ok [![Build Status](https://travis-ci.org/typicode/pkg-ok.svg?branch=master)](https://travis-ci.org/typicode/pkg-ok) [![npm](https://img.shields.io/npm/v/pkg-ok.svg)](https://www.npmjs.com/package/pkg-ok)
 
-> Prevents publishing a module with bad paths :ok_hand:
+> Prevents publishing a module with bad paths 👌
 
-Do you test your package.json `main` and `bin` paths?<br>
-`pkg-ok` checks them and fails if there's a bad path.
+Because it happened to me more than I'd like to admit 😅, `pkg-ok` checks `main` and `bin` paths and prevents publishing if there's a bad path.
 
-Used in
+Used in:
 
 * [json-server](https://github.com/typicode/json-server)
 * [hotel](https://github.com/typicode/hotel)
