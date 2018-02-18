@@ -41,22 +41,6 @@ You can configure it to check more fields or bin files
 pkgOk --field someField --bin script.sh
 ```
 
-## Module
-
-You can also use it as a module
-
-```js
-const path = require('path')
-const pkgOk = require('pkg-ok')
-
-const opts = {
-  fields: [/* ... */],
-  bin: [/* ... */]
-}
-
-pkgOk(path.join(__dirname, './package.json'), opts)
-```
-
 ## License
 
 MIT - [Typicode :cactus:](https://github.com/typicode) - [Patreon](https://patreon.com/typicode)
