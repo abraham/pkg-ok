@@ -5,9 +5,11 @@ A tiny __devDependency__ preventing some basic errors when publishing a module:
 * Ensures paths declared in `main`, `bin`, `module` and `typings` exists
 * Ensures `bin` scripts use cross-platform line endings
 
-## Why?
+### Why?
 
-When refactoring a project and changing paths, it's easy to forget to update `main` or `bin` paths. When coding from Windows, it's easy to use line endings for `bin` files that aren't supported by OS X/Linux.
+When refactoring a project and changing paths, it's easy to forget to update `main` or `bin` paths.
+
+When coding from Windows, it's easy to use line endings for `bin` files that aren't supported by OS X/Linux.
 
 Just by adding `pkg-ok` as a __devDependency__ and with __zero-config__, you can prevent these 2 mistakes and get a safer project.
 
