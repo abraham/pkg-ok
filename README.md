@@ -25,7 +25,8 @@ yarn add pkg-ok --dev
 
 Simply add `pkg-ok` CLI at the end of your `prepublishOnly` script
 
-```json
+```js
+// package.json
 {
   "scripts": {
     "prepublishOnly": "... && pkg-ok"
@@ -39,6 +40,25 @@ You can configure it to check more fields or bin files
 
 ```
 pkgOk --field someField --bin script.sh
+```
+
+## Give it a try
+
+If you want to give a try to `pkg-ok` without publishing, you can change your `main` path:
+
+```js
+// package.json
+{
+  "main": "this/path/doesnt/exist.js",
+  "scripts": {
+    "prepublishOnly": "pkg-ok"
+  }
+}
+```
+
+```sh
+npm run prepublishOnly
+# pkg-ok will give you an error since main path doesn't exist
 ```
 
 ## License
