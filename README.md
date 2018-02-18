@@ -35,7 +35,7 @@ Simply add `pkg-ok` CLI at the end of your `prepublishOnly` script
 
 ## Options
 
-`pkg-ok` can be configured to check more fields or bin files:
+You can configure it to check more fields or bin files
 
 ```
 pkgOk --field someField --bin script.sh
