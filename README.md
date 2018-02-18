@@ -1,39 +1,61 @@
 # pkg-ok [![Build Status](https://travis-ci.org/typicode/pkg-ok.svg?branch=master)](https://travis-ci.org/typicode/pkg-ok) [![npm](https://img.shields.io/npm/v/pkg-ok.svg)](https://www.npmjs.com/package/pkg-ok)
 
-> Prevents publishing a module with bad paths 👌
+A tiny __devDependency__ preventing some basic errors when publishing a module:
 
-Because it happened to me more than I'd like to admit 😅, `pkg-ok` checks `main` and `bin` paths and prevents publishing if there's a bad path.
+* Ensures paths declared in `main`, `bin`, `module` and `typings` exists
+* Ensures `bin` scripts use cross-platform line endings
 
-## Usage
+## Why?
 
-```sh
+When refactoring a project and changing paths, it's easy to forget to update `main` or `bin` paths. When coding from Windows, it's easy to use line endings that aren't supported by Linux or OS X.
+
+Just by adding `pkg-ok` as a __devDependency__ and with __zero-config__, you can prevent these 2 mistakes and get a safer project.
+
+## Install
+
+```
 npm install pkg-ok --save-dev
 ```
 
-```js
-// Edit package.json
+```
+yarn add pkg-ok --dev
+```
+
+## Usage
+
+Simply add `pkg-ok` CLI at the end of your `prepublishOnly` script
+
+```json
 {
-  "main": "THIS_PATH_DOESNT_EXIST.js"
   "scripts": {
-    "prepublish": "... && pkg-ok"
+    "prepublishOnly": "... && pkg-ok"
   }
 }
 ```
 
-```sh
-npm publish
-# Error package.json > main path doesn't exist
+## Options
+
+`pkg-ok` can be configured to check more fields or bin files:
+
+```
+pkgOk --field someField --bin script.sh
 ```
 
-For non-standard fields like `module`, `es2015`, `typings`, ... you can pass them as arguments to `pkg-ok` and it will check them as well (e.g. `pkg-ok module`)
+## Module
 
-__Used in:__
+You can also use it as a module
 
-* [json-server](https://github.com/typicode/json-server)
-* [hotel](https://github.com/typicode/hotel)
-* [lowdb](https://github.com/typicode/lowdb)
-* [react-fake-props](https://github.com/typicode/react-fake-props)
-* ... and [other](https://libraries.io/npm/pkg-ok/dependent-repositories) awesome projects
+```js
+const path = require('path')
+const pkgOk = require('pkg-ok')
+
+const opts = {
+  fields: [/* ... */],
+  bin: [/* ... */]
+}
+
+pkgOk(path.join(__dirname, './package.json'), opts)
+```
 
 ## License
 

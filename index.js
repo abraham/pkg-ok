@@ -1,11 +1,20 @@
 const fs = require('fs')
 const path = require('path')
+const normalizeNewline = require('normalize-newline')
+
+const FIELDS = [
+  'bin',
+  'typings', // TypeScript
+  'module' // https://github.com/stereobooster/package.json#module
+]
+
+// Check fields for file existance
 
 function doesntExist (dir, file) {
   return !fs.existsSync(path.join(dir, file))
 }
 
-function checkField (pkg, field, dir) {
+function checkField (pkg, dir, field) {
   const errors = []
 
   if (pkg[field]) {
@@ -27,23 +36,66 @@ function checkField (pkg, field, dir) {
   return errors
 }
 
-module.exports = function pkgOk (dir, otherFields) {
+function checkFields (pkg, dir, otherFields) {
   const errors = []
-  const pkgPath = path.join(dir, 'package.json')
-  const pkg = JSON.parse(fs.readFileSync(pkgPath))
 
   // https://docs.npmjs.com/files/package.json#main
   if (pkg.main && doesntExist(dir, pkg.main)) {
     errors.push('main')
   }
 
-  // https://docs.npmjs.com/files/package.json#bin
-  const fields = ['bin'].concat(otherFields || [])
+  const fields = FIELDS.concat(otherFields || [])
 
   // Check fields and add errors to the errors array
   fields.forEach(field => {
-    checkField(pkg, field, dir).forEach(error => errors.push(error))
+    checkField(pkg, dir, field).forEach(error => errors.push(error))
   })
 
   return errors
 }
+
+// Check scripts line endings
+
+function normalize (dir, file) {
+  const filename = path.join(dir, file)
+  const data = fs.readFileSync(filename, 'utf-8')
+  const normalizedData = normalizeNewline(data)
+  fs.writeFileSync(filename, normalizedData)
+}
+
+function normalizeField (pkg, dir, field) {
+  if (pkg[field]) {
+    if (pkg[field] instanceof Object) {
+      Object
+        .keys(pkg[field])
+        .forEach(key => normalize(dir, pkg[field][key]))
+    } else {
+      normalize(dir, pkg[field])
+    }
+  }
+}
+
+function normalizeScripts (pkg, dir, files) {
+  normalizeField(pkg, dir, 'bin')
+  files.forEach(file => normalize(dir, file))
+}
+
+// Main function
+function pkgOk (dir, { fields = [], bin = [] } = {}) {
+  const pkgPath = path.join(dir, 'package.json')
+  const pkg = JSON.parse(fs.readFileSync(pkgPath))
+
+  // Check files exist in package.json fields and additional fields
+  const errors = checkFields(pkg, dir, fields)
+
+  if (errors.length) {
+    return errors
+  }
+
+  // Normalize line endings for bin scripts and additional scripts
+  normalizeScripts(pkg, dir, bin)
+
+  return []
+}
+
+module.exports = pkgOk
