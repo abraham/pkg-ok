@@ -5,7 +5,8 @@ const normalizeNewline = require('normalize-newline')
 const FIELDS = [
   'bin',
   'typings', // TypeScript
-  'module' // https://github.com/stereobooster/package.json#module
+  'module', // https://github.com/stereobooster/package.json#module used by rollup, webpack
+  'es2015' // https://github.com/stereobooster/package.json#es2015 used by Angular
 ]
 
 // Check fields for file existance
@@ -89,7 +90,11 @@ function pkgOk (dir, { fields = [], bin = [] } = {}) {
   const errors = checkFields(pkg, dir, fields)
 
   if (errors.length) {
-    return errors
+    const message = errors
+      .map(error => `${error} path doesn't exist in package.json`)
+      .join('\n')
+
+    throw new Error(message)
   }
 
   // Normalize line endings for bin scripts and additional scripts

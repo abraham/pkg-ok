@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const chalk = require('chalk')
 const pkgOk = require('./')
 
 var argv = require('yargs')
@@ -16,12 +17,10 @@ var argv = require('yargs')
   })
   .argv
 
-const errors = pkgOk(process.cwd(), { fields: argv.field, bin: argv.bin })
-
-if (errors.length) {
-  errors.forEach(error => {
-    console.error(`Error package.json > ${error} path doesn't exist`)
-  })
-
+try {
+  pkgOk(process.cwd(), { fields: argv.field, bin: argv.bin })
+} catch (error) {
+  console.log(chalk.red('pkg-ok error'))
+  console.log(chalk.red(error.message))
   process.exit(1)
 }
