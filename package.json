@@ -18,7 +18,10 @@
     "bin",
     "path",
     "exist",
-    "test"
+    "test",
+    "crlf",
+    "lf",
+    "line ending"
   ],
   "author": "typicode <typicode@gmail.com>",
   "license": "MIT",
