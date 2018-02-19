@@ -2,7 +2,7 @@
 
 A tiny __devDependency__ preventing some basic errors when publishing a module:
 
-* Ensures paths declared in `main`, `bin`, `module` and `typings` exists
+* Ensures paths declared in `main`, `bin`, `module`, `typings` and `es2015` exists
 * Ensures `bin` scripts use cross-platform line endings
 
 ### Why?
