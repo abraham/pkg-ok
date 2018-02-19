@@ -1,31 +1,27 @@
-# pkg-ok [![Build Status](https://travis-ci.org/typicode/pkg-ok.svg?branch=master)](https://travis-ci.org/typicode/pkg-ok) [![npm](https://img.shields.io/npm/v/pkg-ok.svg)](https://www.npmjs.com/package/pkg-ok)
+# pkg-ok [![Build Status](https://img.shields.io/travis/typicode/pkg-ok.svg?style=flat-square)](https://travis-ci.org/typicode/pkg-ok) [![npm](https://img.shields.io/npm/v/pkg-ok.svg?style=flat-square)](https://www.npmjs.com/package/pkg-ok)
 
-A tiny __devDependency__ preventing some basic errors when publishing a module:
+> Whether you're publishing a Node, React, Vue, or any kind of module on npm, pkg-ok will do some last minute checks before you publish
 
 * Ensures paths declared in `main`, `bin`, `module`, `typings` and `es2015` exists
 * Ensures `bin` scripts use cross-platform line endings
 
-### Why?
+Also pkg-ok being a __devDependency__, it won't add to your published module size.
 
-When refactoring a project and changing paths, it's easy to forget to update `main` or `bin` paths.
+## Getting started
 
-When coding from Windows, it's easy to use line endings for `bin` files that aren't supported by OS X/Linux.
+Install pkg-ok using `npm`
 
-Just by adding `pkg-ok` as a __devDependency__ and with __zero-config__, you can prevent these 2 mistakes and get a safer project.
-
-## Install
-
-```
+```sh
 npm install pkg-ok --save-dev
 ```
 
-```
+or via `yarn`
+
+```sh
 yarn add pkg-ok --dev
 ```
 
-## Usage
-
-Simply add `pkg-ok` CLI at the end of your `prepublishOnly` script
+Then simply add pkg-ok CLI at the end of your `prepublishOnly` script
 
 ```js
 // package.json
@@ -36,31 +32,45 @@ Simply add `pkg-ok` CLI at the end of your `prepublishOnly` script
 }
 ```
 
-## Options
-
-You can configure it to check more fields or bin files
-
-```
-pkgOk --field someField --bin script.sh
-```
-
 ## Give it a try
 
-If you want to give a try to `pkg-ok` without publishing, you can change your `main` path:
+If you want to give a try to pkg-ok without publishing, you can change your `main` path
 
 ```js
 // package.json
 {
   "main": "this/path/doesnt/exist.js",
-  "scripts": {
-    "prepublishOnly": "pkg-ok"
-  }
 }
 ```
+
+And run `prepublishOnly` manually
 
 ```sh
 npm run prepublishOnly
 # pkg-ok will give you an error since main path doesn't exist
+```
+
+## Options
+
+You can also configure pkg-ok to check additional `package.json` fields or bin files
+
+```
+pkgOk --field someField --bin script.sh
+```
+
+## Module
+
+You can use pkg-ok as a module
+
+```js
+const pkgOk = require('pkg-ok')
+const opts = {
+  fields: ['someField'],
+  bin: ['script.sh']
+}
+
+// Assuming this file is at the same level as package.json
+pkgOk(__dirname, opts)
 ```
 
 ## License

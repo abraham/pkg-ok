@@ -2,7 +2,7 @@
   "name": "pkg-ok",
   "version": "2.0.0",
   "description": "Checks package.json main and bin paths",
-  "main": "index.js",
+  "main": "foo.js",
   "bin": "bin.js",
   "scripts": {
     "test": "jest && eslint .",
@@ -38,6 +38,7 @@
     "mock-fs": "^4.4.2"
   },
   "dependencies": {
+    "chalk": "^2.3.1",
     "normalize-newline": "^3.0.0",
     "yargs": "^11.0.0"
   },

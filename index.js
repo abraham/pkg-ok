@@ -91,7 +91,7 @@ function pkgOk (dir, { fields = [], bin = [] } = {}) {
 
   if (errors.length) {
     const message = errors
-      .map(error => `package.json > ${error} path doesn't exist`)
+      .map(error => `${error} path doesn't exist in package.json`)
       .join('\n')
 
     throw new Error(message)
