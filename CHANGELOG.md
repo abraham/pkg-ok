@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.2.0
+
+* Add `types` which is synonymous with `typings` 
+
 ## 2.1.0
 
 * Use `pkg-ok` as a module
