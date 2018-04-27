@@ -2,10 +2,10 @@
 
 > Whether you're publishing a Node, React, Vue, or any kind of module on npm, pkg-ok will do some last minute checks before you publish
 
-* Ensures paths declared in `main`, `bin`, `module`, `typings` and `es2015` exists
-* Ensures `bin` scripts use cross-platform line endings
+* Ensures paths declared in `main`, `bin`, `module`, `types`, `typings` and `es2015` exists
+* Ensures `bin` scripts uses cross-platform line endings
 
-Also pkg-ok being a __devDependency__, it won't add to your published module size.
+Also pkg-ok being a __devDependency__, it won't increase your published module size.
 
 ## Getting started
 
