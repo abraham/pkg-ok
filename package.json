@@ -1,6 +1,6 @@
 {
   "name": "pkg-ok",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Checks package.json main and bin paths",
   "main": "index.js",
   "bin": "bin.js",
