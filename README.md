@@ -1,11 +1,9 @@
 # pkg-ok [![Build Status](https://img.shields.io/travis/typicode/pkg-ok.svg?style=flat-square)](https://travis-ci.org/typicode/pkg-ok) [![npm](https://img.shields.io/npm/v/pkg-ok.svg?style=flat-square)](https://www.npmjs.com/package/pkg-ok)
 
-> Whether you're publishing a Node, React, Vue, or any kind of module on npm, pkg-ok will do some last minute checks before you publish
+> Whether you're publishing a Node, React, Vue, or any kind of module on npm, pkg-ok will do some last minute checks on paths and scripts before you publish
 
-* Ensures paths declared in `main`, `bin`, `module`, `types`, `typings` and `es2015` exists
-* Ensures `bin` scripts uses cross-platform line endings
-
-Also pkg-ok being a __devDependency__, it won't increase your published module size.
+* Ensures paths declared in `main`, `bin`, `module`, `types`, `typings` and `es2015` exist
+* Ensures `bin` scripts use cross-platform line endings
 
 ## Usage
 
@@ -31,23 +29,21 @@ npm publish
 
 ## Options
 
-You can also configure pkg-ok to check additional `package.json` fields or bin files
+`pkg-ok` can be configured to check additional `package.json` fields or bin files
 
 ```
 pkgOk --field someField --bin script.sh
 ```
 
-## Module
+## API
 
 ```js
-const pkgOk = require('pkg-ok')
-const opts = {
-  fields: ['someField'],
-  bin: ['script.sh']
-}
+const pkgDirectory = __dirname
 
-// Assuming this file is at the same level as package.json
-pkgOk(__dirname, opts)
+pkgOk(pkgDirectory, {
+  fields: ['someAdditonalField'],
+  bin: ['someAdditionalScript.sh']
+})
 ```
 
 ## License
