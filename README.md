@@ -7,47 +7,26 @@
 
 Also pkg-ok being a __devDependency__, it won't increase your published module size.
 
-## Getting started
-
-Install pkg-ok using `npm`
+## Usage
 
 ```sh
 npm install pkg-ok --save-dev
 ```
 
-or via `yarn`
-
-```sh
-yarn add pkg-ok --dev
-```
-
-Then simply add pkg-ok CLI at the end of your `prepublishOnly` script
-
 ```js
 // package.json
 {
+  "main": "this_file_doesnt_exist.js",
   "scripts": {
     "prepublishOnly": "... && pkg-ok"
   }
 }
 ```
 
-## Give it a try
-
-If you want to give a try to pkg-ok without publishing, you can change your `main` path
-
-```js
-// package.json
-{
-  "main": "this/path/doesnt/exist.js",
-}
-```
-
-And run `prepublishOnly` manually
-
 ```sh
-npm run prepublishOnly
-# pkg-ok will give you an error since main path doesn't exist
+npm publish
+# Error!
+# Since main file doesn't exist, publish is blocked 
 ```
 
 ## Options
@@ -59,8 +38,6 @@ pkgOk --field someField --bin script.sh
 ```
 
 ## Module
-
-You can use pkg-ok as a module
 
 ```js
 const pkgOk = require('pkg-ok')
