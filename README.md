@@ -1,8 +1,8 @@
 # pkg-ok [![Build Status](https://img.shields.io/travis/typicode/pkg-ok.svg?style=flat-square)](https://travis-ci.org/typicode/pkg-ok) [![npm](https://img.shields.io/npm/v/pkg-ok.svg?style=flat-square)](https://www.npmjs.com/package/pkg-ok)
 
-> Whether you're publishing a Node, React, Vue, or any kind of module on npm, pkg-ok will do some last minute checks on paths and scripts before you publish
+> `pkg-ok` checks paths and scripts defined in `package.json` before you publish
 
-* Ensures paths declared in `main`, `bin`, `module`, `types`, `typings` and `es2015` exist
+* Ensures paths defined in `main`, `bin`, `module`, `types`, `typings` and `es2015` exist
 * Ensures `bin` scripts use cross-platform line endings
 
 ## Usage
