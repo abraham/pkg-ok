@@ -1,6 +1,6 @@
 # pkg-ok [![Build Status](https://img.shields.io/travis/typicode/pkg-ok.svg?style=flat-square)](https://travis-ci.org/typicode/pkg-ok) [![npm](https://img.shields.io/npm/v/pkg-ok.svg?style=flat-square)](https://www.npmjs.com/package/pkg-ok)
 
-> `pkg-ok` checks paths and scripts defined in `package.json` before you publish
+> `pkg-ok` checks paths and scripts defined in `package.json` before you publish 👌
 
 * Ensures paths defined in `main`, `bin`, `module`, `types`, `typings` and `es2015` exist
 * Ensures `bin` scripts use cross-platform line endings
