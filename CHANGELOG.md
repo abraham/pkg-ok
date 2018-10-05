@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.3.1
+
+* Change CLI parser ([meow](https://github.com/sindresorhus/meow))
+
 ## 2.3.0
 
 * Add `browser` field

@@ -1,24 +1,34 @@
 #!/usr/bin/env node
+const meow = require('meow')
 const chalk = require('chalk')
 const pkgOk = require('./')
 
-var argv = require('yargs')
-  .usage('$0 --field [otherField] --bin [otherFile]')
-  .pkgConf('pkg-ok')
-  .option('field', {
-    alias: 'f',
-    describe: `additional field to check`,
-    type: 'array'
-  })
-  .option('bin', {
-    alias: 'b',
-    describe: 'additional bin file to check',
-    type: 'array'
-  })
-  .argv
+const cli = meow(`
+  Usage
+    $ pkg-ok
+
+  Options
+    --field, -f  additional field to check
+    --bin, -b    additional bin file to check
+
+  Examples
+    $ pkg-ok
+    $ pkg-ok --field otherField --bin otherFile
+`, {
+  flags: {
+    field: {
+      alias: 'f',
+      type: 'array'
+    },
+    bin: {
+      alias: 'b',
+      type: 'array'
+    }
+  }
+})
 
 try {
-  pkgOk(process.cwd(), { fields: argv.field, bin: argv.bin })
+  pkgOk(process.cwd(), { fields: cli.flags.field, bin: cli.flags.bin })
 } catch (error) {
   console.log(chalk.red('pkg-ok error'))
   console.log(chalk.red(error.message))
