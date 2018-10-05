@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.3.0
+
+* Add `browser` field
+
 ## 2.2.0
 
 * Add `types` which is synonymous with `typings` 

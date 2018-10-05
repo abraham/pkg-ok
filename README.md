@@ -2,7 +2,7 @@
 
 > `pkg-ok` checks paths and scripts defined in `package.json` before you publish 👌
 
-* Ensures paths defined in `main`, `bin`, `module`, `types`, `typings` and `es2015` exist
+* Ensures paths defined in `main`, `bin`, `module`, `types`, `typings`, `es2015` and `browser` exist
 * Ensures `bin` scripts use cross-platform line endings
 
 ## Usage
