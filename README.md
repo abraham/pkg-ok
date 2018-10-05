@@ -5,6 +5,10 @@
 * Ensures paths defined in `main`, `bin`, `module`, `types`, `typings`, `es2015` and `browser` exist
 * Ensures `bin` scripts use cross-platform line endings
 
+<a href="https://www.patreon.com/typicode">
+  <img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" width="160">
+</a>
+
 ## Usage
 
 ```sh
@@ -48,4 +52,6 @@ pkgOk(pkgDirectory, {
 
 ## License
 
-MIT - [Typicode :cactus:](https://github.com/typicode) - [Patreon](https://patreon.com/typicode)
+MIT
+
+[Patreon](https://www.patreon.com/typicode) - [Supporters](https://thanks.typicode.com) ✨
