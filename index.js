@@ -7,7 +7,8 @@ const FIELDS = [
   'types', // https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html used by TypeScript
   'typings', // https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html alternatively used by TypeScript
   'module', // https://github.com/stereobooster/package.json#module used by rollup, webpack
-  'es2015' // https://github.com/stereobooster/package.json#es2015 used by Angular
+  'es2015', // https://github.com/stereobooster/package.json#es2015 used by Angular
+  'browser' // https://docs.npmjs.com/files/package.json#browser
 ]
 
 // Check fields for file existance
