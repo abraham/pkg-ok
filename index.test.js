@@ -34,14 +34,29 @@ describe('pkg-ok', () => {
         bin: 'script.js'
       }),
       '/E/script.js': 'foo\r\nbar',
-      '/E/another-script.js': 'baz\r\nqux'
+      '/E/another-script.js': 'baz\r\nqux',
+      '/F/package.json': JSON.stringify({
+        'browser': {
+          './dist/lib.cjs.js': './dist/lib.cjs.browser.js',
+          './dist/lib.esm.js': './dist/lib.esm.browser.js'
+        }
+      }),
+      '/F/dist/lib.cjs.browser.js': 'cjs',
+      '/F/dist/lib.esm.browser.js': 'esm',
+      '/G/package.json': JSON.stringify({
+        'browser': {
+          'dist/lib.cjs.js': './dist/lib.cjs.browser.js',
+          './dist/lib.esm.js': 'dist/lib.esm.browser.js'
+        }
+      }),
+      '/G/dist/lib.cjs.js': './dist/lib.cjs.browser.js'
     })
   })
 
   afterEach(() => mock.restore())
 
   it('checks /A', () => {
-    expect(() => pkgOk(path.join('/A'))).toThrowError(/main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser/)
+    expect(() => pkgOk(path.join('/A'))).toThrowError(/main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser path[\s\S]*browser must/)
   })
 
   it('checks /B', () => {
@@ -60,5 +75,14 @@ describe('pkg-ok', () => {
     pkgOk(path.join('/E'), { bin: ['another-script.js'] })
     expect(fs.readFileSync('/E/script.js', 'utf-8')).toEqual('foo\nbar')
     expect(fs.readFileSync('/E/another-script.js', 'utf-8')).toEqual('baz\nqux')
+  })
+
+  it('checks /F', () => {
+    pkgOk(path.join('/F'))
+    expect(fs.readFileSync('/F/dist/lib.cjs.browser.js', 'utf-8')).toEqual('cjs')
+    expect(fs.readFileSync('/F/dist/lib.esm.browser.js', 'utf-8')).toEqual('esm')
+  })
+  it('checks /G', () => {
+    expect(() => pkgOk(path.join('/G'))).toThrowError(/browser.*path[\s\S]*browser.*must[\s\S]*browser.*path[\s\S]*browser.*must/)
   })
 })

@@ -18,9 +18,9 @@ function doesntExist (dir, file) {
 }
 
 function mustBeRelative (field, file, key) {
-  const mustBeRelative = ['browser']
+  const mustBeRelativeList = ['browser']
 
-  if (!mustBeRelative.includes(field)) return
+  if (!mustBeRelativeList.includes(field)) return
 
   return !file.match(/^.\//) || (key && !key.match(/^.\//))
 }
