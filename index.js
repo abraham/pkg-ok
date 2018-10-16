@@ -26,12 +26,18 @@ function checkField (pkg, dir, field) {
         .keys(pkg[field])
         .forEach(key => {
           if (doesntExist(dir, pkg[field][key])) {
-            errors.push(`${field}.${key}`)
+            errors.push({
+              type: 'doesNotExist',
+              content: `${field}.${key}`
+            })
           }
         })
     } else {
       if (doesntExist(dir, pkg[field])) {
-        errors.push(field)
+        errors.push({
+          type: 'doesNotExist',
+          content: field
+        })
       }
     }
   }
@@ -44,7 +50,10 @@ function checkFields (pkg, dir, otherFields) {
 
   // https://docs.npmjs.com/files/package.json#main
   if (pkg.main && doesntExist(dir, pkg.main)) {
-    errors.push('main')
+    errors.push({
+      type: 'doesNotExist',
+      content: 'main'
+    })
   }
 
   const fields = FIELDS.concat(otherFields || [])
@@ -93,7 +102,11 @@ function pkgOk (dir, { fields = [], bin = [] } = {}) {
 
   if (errors.length) {
     const message = errors
-      .map(error => `${error} path doesn't exist in package.json`)
+      .map(({ type, content }) => {
+        switch (type) {
+          case 'doesNotExist': return `${content} path doesn't exist in package.json`
+        }
+      })
       .join('\n')
 
     throw new Error(message)
