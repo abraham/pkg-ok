@@ -17,6 +17,14 @@ function doesntExist (dir, file) {
   return !fs.existsSync(path.join(dir, file))
 }
 
+function mustBeRelative (file, key) {
+  const mustBeRelative = ['browser']
+
+  if (!mustBeRelative.includes(key)) return
+
+  return !file.match(/^.\//)
+}
+
 function checkField (pkg, dir, field) {
   const errors = []
 
@@ -31,11 +39,23 @@ function checkField (pkg, dir, field) {
               content: `${field}.${key}`
             })
           }
+          if (mustBeRelative(pkg[field][key], key)) {
+            errors.push({
+              type: 'needsRelativePath',
+              content: `${field}.${key}`
+            })
+          }
         })
     } else {
       if (doesntExist(dir, pkg[field])) {
         errors.push({
           type: 'doesNotExist',
+          content: field
+        })
+      }
+      if (mustBeRelative(pkg[field], field)) {
+        errors.push({
+          type: 'needsRelativePath',
           content: field
         })
       }
@@ -103,9 +123,14 @@ function pkgOk (dir, { fields = [], bin = [] } = {}) {
   if (errors.length) {
     const message = errors
       .map(({ type, content }) => {
-        switch (type) {
-          case 'doesNotExist': return `${content} path doesn't exist in package.json`
+        let err = []
+        if (type === 'doesNotExist') {
+          err.push(`${content} path doesn't exist in package.json`)
         }
+        if (type === 'needsRelativePath') {
+          err.push(`${content} must use a relative path`)
+        }
+        return err.reduce((mem, curr) => curr.concat(mem), [])
       })
       .join('\n')
 
