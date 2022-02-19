@@ -49,11 +49,11 @@ describe('pkg-ok', () => {
   })
 
   it('checks /C', () => {
-    expect(() => pkgOk(path.join('/C'), { fields: [ 'foo' ] }).toThrowError(/foo/))
+    expect(() => pkgOk(path.join('/C'), { fields: ['foo'] }).toThrowError(/foo/))
   })
 
   it('checks /D', () => {
-    expect(() => pkgOk(path.join('/D'), { fields: [ 'foo' ] })).toThrowError(/foo\.bar[\s\S]*foo\.baz/)
+    expect(() => pkgOk(path.join('/D'), { fields: ['foo'] })).toThrowError(/foo\.bar[\s\S]*foo\.baz/)
   })
 
   it('checks /E', () => {

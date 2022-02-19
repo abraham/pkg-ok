@@ -6,7 +6,8 @@
   "bin": "bin.js",
   "scripts": {
     "test": "jest && eslint .",
-    "prepublishOnly": "npm test && node ./bin"
+    "prepublishOnly": "npm test && node ./bin",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -32,19 +33,19 @@
   },
   "homepage": "https://github.com/typicode/pkg-ok#readme",
   "devDependencies": {
-    "eslint": "^5.6.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "husky": "^1.1.1",
-    "jest": "^23.6.0",
-    "mock-fs": "^4.7.0"
+    "eslint": "^8.0.0",
+    "eslint-config-standard": "^17.0.0-1",
+    "eslint-plugin-import": "^2.0.0",
+    "eslint-plugin-jest": "^26.0.0",
+    "eslint-plugin-n": "^14.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "husky": "^7.0.0",
+    "jest": "^27.0.0",
+    "mock-fs": "^5.0.0"
   },
   "dependencies": {
-    "chalk": "^2.4.1",
-    "meow": "^5.0.0",
+    "chalk": "^5.0.0",
+    "meow": "^10.0.0",
     "normalize-newline": "^3.0.0"
   },
   "engines": {
