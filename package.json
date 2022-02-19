@@ -1,5 +1,5 @@
 {
-  "name": "pkg-ok",
+  "name": "@abraham/pkg-ok",
   "version": "3.0.0-next.0",
   "description": "Checks package.json main and bin paths",
   "exports": "./index.js",
