@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/typicode/pkg-ok.git"
+    "url": "git+https://github.com/abraham/pkg-ok.git"
   },
   "keywords": [
     "package",
@@ -29,11 +29,12 @@
     "line ending"
   ],
   "author": "typicode <typicode@gmail.com>",
+  "contributors": ["Abraham Williams <hi@abrah.am>"],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/typicode/pkg-ok/issues"
+    "url": "https://github.com/abraham/pkg-ok/issues"
   },
-  "homepage": "https://github.com/typicode/pkg-ok#readme",
+  "homepage": "https://github.com/abraham/pkg-ok#readme",
   "devDependencies": {
     "eslint": "^8.0.0",
     "eslint-config-standard": "^17.0.0-1",
