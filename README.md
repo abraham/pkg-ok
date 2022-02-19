@@ -10,7 +10,7 @@ _This is a modernized fork of [typicode/pkg-ok](https://github.com/typicode/pkg-
 ## Usage
 
 ```sh
-npm install pkg-ok --save-dev
+npm install @abraham/pkg-ok --save-dev
 ```
 
 ```js
