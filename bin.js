@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-const meow = require('meow')
-const chalk = require('chalk')
-const pkgOk = require('./')
+import meow from 'meow'
+import chalk from 'chalk'
+import { pkgOk } from './index.js'
 
 const cli = meow(`
   Usage
@@ -15,6 +15,7 @@ const cli = meow(`
     $ pkg-ok
     $ pkg-ok --field otherField --bin otherFile
 `, {
+  importMeta: import.meta,
   flags: {
     field: {
       alias: 'f',

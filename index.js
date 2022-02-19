@@ -1,6 +1,6 @@
-const fs = require('fs')
-const path = require('path')
-const normalizeNewline = require('normalize-newline')
+import fs from 'fs'
+import path from 'path'
+import normalizeNewline from 'normalize-newline'
 
 const FIELDS = [
   'bin',
@@ -84,7 +84,7 @@ function normalizeScripts (pkg, dir, files) {
 }
 
 // Main function
-function pkgOk (dir, { fields = [], bin = [] } = {}) {
+export function pkgOk (dir, { fields = [], bin = [] } = {}) {
   const pkgPath = path.join(dir, 'package.json')
   const pkg = JSON.parse(fs.readFileSync(pkgPath))
 
@@ -104,5 +104,3 @@ function pkgOk (dir, { fields = [], bin = [] } = {}) {
 
   return []
 }
-
-module.exports = pkgOk
