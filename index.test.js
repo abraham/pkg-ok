@@ -1,7 +1,7 @@
-const fs = require('fs')
-const path = require('path')
-const mock = require('mock-fs')
-const pkgOk = require('./')
+import fs from 'fs'
+import path from 'path'
+import mock from 'mock-fs'
+import { pkgOk } from './index.js'
 
 describe('pkg-ok', () => {
   beforeEach(() => {
