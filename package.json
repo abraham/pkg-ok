@@ -1,6 +1,6 @@
 {
   "name": "pkg-ok",
-  "version": "2.3.1",
+  "version": "2.3.2-next.0",
   "description": "Checks package.json main and bin paths",
   "exports": "./index.js",
   "bin": "bin.js",
@@ -29,7 +29,9 @@
     "line ending"
   ],
   "author": "typicode <typicode@gmail.com>",
-  "contributors": ["Abraham Williams <hi@abrah.am>"],
+  "contributors": [
+    "Abraham Williams <hi@abrah.am>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/abraham/pkg-ok/issues"
