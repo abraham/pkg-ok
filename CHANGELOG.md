@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 3.0.0-next
+
+* Require node 12+
+* Switch to ESM
+* Update dependencies
+* Switch to GitHub Actions
+* Remove package-lock.json
+
+
 ## 2.3.1
 
 * Change CLI parser ([meow](https://github.com/sindresorhus/meow))
@@ -10,7 +19,7 @@
 
 ## 2.2.0
 
-* Add `types` which is synonymous with `typings` 
+* Add `types` which is synonymous with `typings`
 
 ## 2.1.0
 
