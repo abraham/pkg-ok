@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-import meow from 'meow'
-import chalk from 'chalk'
-import { pkgOk } from './index.js'
+import meow from 'meow';
+import chalk from 'chalk';
+import { pkgOk } from './index.js';
 
-const cli = meow(`
+const cli = meow(
+  `
   Usage
     $ pkg-ok
 
@@ -14,24 +15,26 @@ const cli = meow(`
   Examples
     $ pkg-ok
     $ pkg-ok --field otherField --bin otherFile
-`, {
-  importMeta: import.meta,
-  flags: {
-    field: {
-      alias: 'f',
-      type: 'array'
+`,
+  {
+    importMeta: import.meta,
+    flags: {
+      field: {
+        alias: 'f',
+        type: 'array',
+      },
+      bin: {
+        alias: 'b',
+        type: 'array',
+      },
     },
-    bin: {
-      alias: 'b',
-      type: 'array'
-    }
   }
-})
+);
 
 try {
-  pkgOk(process.cwd(), { fields: cli.flags.field, bin: cli.flags.bin })
+  pkgOk(process.cwd(), { fields: cli.flags.field, bin: cli.flags.bin });
 } catch (error) {
-  console.log(chalk.red('pkg-ok error'))
-  console.log(chalk.red(error.message))
-  process.exit(1)
+  console.log(chalk.red('pkg-ok error'));
+  console.log(chalk.red(error.message));
+  process.exit(1);
 }

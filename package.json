@@ -6,8 +6,10 @@
   "bin": "bin.js",
   "type": "module",
   "scripts": {
-    "test": "npm run jest && eslint . && node ./bin",
+    "test": "npm run jest && node ./bin",
     "jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "format": "prettier --write .",
+    "lint": "prettier --check . && eslint",
     "prepublishOnly": "npm test && node ./bin",
     "prepare": "husky install"
   },
@@ -39,6 +41,7 @@
   "homepage": "https://github.com/abraham/pkg-ok#readme",
   "devDependencies": {
     "eslint": "^8.0.0",
+    "eslint-config-prettier": "^8.0.0",
     "eslint-config-standard": "^17.0.0-1",
     "eslint-plugin-import": "^2.0.0",
     "eslint-plugin-jest": "^26.0.0",
@@ -46,7 +49,8 @@
     "eslint-plugin-promise": "^6.0.0",
     "husky": "^7.0.0",
     "jest": "^27.0.0",
-    "mock-fs": "^5.0.0"
+    "mock-fs": "^5.0.0",
+    "prettier": "2.5.1"
   },
   "dependencies": {
     "chalk": "^5.0.0",
