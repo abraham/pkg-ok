@@ -2,8 +2,8 @@
 
 > `pkg-ok` checks paths and scripts defined in `package.json` before you publish 👌
 
-* Ensures paths defined in `main`, `bin`, `module`, `types`, `typings`, `es2015` and `browser` exist
-* Ensures `bin` scripts use cross-platform line endings
+- Ensures paths defined in `main`, `bin`, `module`, `types`, `typings`, `es2015` and `browser` exist
+- Ensures `bin` scripts use cross-platform line endings
 
 _This is a modernized fork of [typicode/pkg-ok](https://github.com/typicode/pkg-ok)._
 
@@ -40,12 +40,12 @@ pkg-ok --field someField --bin script.sh
 ## API
 
 ```js
-const pkgDirectory = __dirname
+const pkgDirectory = __dirname;
 
 pkgOk(pkgDirectory, {
   fields: ['someAdditonalField'],
-  bin: ['someAdditionalScript.sh']
-})
+  bin: ['someAdditionalScript.sh'],
+});
 ```
 
 ## License
