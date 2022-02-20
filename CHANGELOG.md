@@ -7,6 +7,9 @@
 - Update dependencies
 - Switch to GitHub Actions
 - Remove package-lock.json
+- Format with Prettier
+- Convert to TypeScript
+- Add `exports` field
 
 ## 2.3.1
 
