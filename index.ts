@@ -24,7 +24,7 @@ const FIELDS = [
 
 // Check fields for file existence
 
-function doesntExist(dir: string, file: string) {
+function doesNotExist(dir: string, file: string) {
   return !fs.existsSync(path.join(dir, file));
 }
 
@@ -34,12 +34,12 @@ function checkField(pkg: Pkg, dir: string, field: string) {
   if (pkg[field]) {
     if (pkg[field] instanceof Object) {
       Object.keys(pkg[field]).forEach((key) => {
-        if (doesntExist(dir, pkg[field][key])) {
+        if (doesNotExist(dir, pkg[field][key])) {
           errors.push(`${field}.${key}`);
         }
       });
     } else {
-      if (doesntExist(dir, pkg[field])) {
+      if (doesNotExist(dir, pkg[field])) {
         errors.push(field);
       }
     }
