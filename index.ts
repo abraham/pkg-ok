@@ -18,6 +18,7 @@ const FIELDS = [
   'module', // https://github.com/stereobooster/package.json#module used by rollup, webpack
   'es2015', // https://github.com/stereobooster/package.json#es2015 used by Angular
   'browser', // https://docs.npmjs.com/files/package.json#browser
+  'exports', // https://nodejs.org/api/packages.html#subpath-exports
 ];
 
 // Check fields for file existence
