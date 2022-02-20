@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import meow from 'meow';
 import chalk from 'chalk';
+import meow from 'meow';
 import { pkgOk } from './index.js';
 
 const cli = meow(
@@ -21,20 +21,31 @@ const cli = meow(
     flags: {
       field: {
         alias: 'f',
-        type: 'array',
+        type: 'string',
+        isMultiple: true,
       },
       bin: {
         alias: 'b',
-        type: 'array',
+        type: 'string',
+        isMultiple: true,
       },
     },
   }
 );
 
+const errorMessage = (error: unknown) => {
+  if (error instanceof Error) {
+    return error.message;
+  } else {
+    return 'Unknown error running pkg-ok';
+  }
+};
+
 try {
   pkgOk(process.cwd(), { fields: cli.flags.field, bin: cli.flags.bin });
+  console.log(chalk.green('Package ok'));
 } catch (error) {
   console.log(chalk.red('pkg-ok error'));
-  console.log(chalk.red(error.message));
+  console.log(chalk.red(errorMessage(error)));
   process.exit(1);
 }

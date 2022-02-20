@@ -38,3 +38,8 @@ jspm_packages
 
 # npm lock file
 package-lock.json
+
+# Ignore compiled files
+*.js
+*.js.map
+*.d.ts

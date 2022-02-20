@@ -1,6 +1,7 @@
+import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 import fs from 'fs';
-import path from 'path';
 import mock from 'mock-fs';
+import path from 'path';
 import { pkgOk } from './index.js';
 
 describe('pkg-ok', () => {
@@ -51,7 +52,7 @@ describe('pkg-ok', () => {
   });
 
   it('checks /C', () => {
-    expect(() => pkgOk(path.join('/C'), { fields: ['foo'] }).toThrowError(/foo/));
+    expect(() => pkgOk(path.join('/C'), { fields: ['foo'] })).toThrowError(/foo/);
   });
 
   it('checks /D', () => {

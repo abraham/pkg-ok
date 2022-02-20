@@ -1,7 +1,16 @@
 import fs from 'fs';
-import path from 'path';
 import normalizeNewline from 'normalize-newline';
+import path from 'path';
 
+// TODO: Remove any
+type Pkg = any;
+
+export interface Options {
+  bin?: string[];
+  fields?: string[];
+}
+
+// TODO: add exports
 const FIELDS = [
   'bin',
   'types', // https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html used by TypeScript
@@ -11,13 +20,13 @@ const FIELDS = [
   'browser', // https://docs.npmjs.com/files/package.json#browser
 ];
 
-// Check fields for file existance
+// Check fields for file existence
 
-function doesntExist(dir, file) {
+function doesntExist(dir: string, file: string) {
   return !fs.existsSync(path.join(dir, file));
 }
 
-function checkField(pkg, dir, field) {
+function checkField(pkg: Pkg, dir: string, field: string) {
   const errors = [];
 
   if (pkg[field]) {
@@ -37,7 +46,7 @@ function checkField(pkg, dir, field) {
   return errors;
 }
 
-function checkFields(pkg, dir, otherFields) {
+function checkFields(pkg: Pkg, dir: string, otherFields: string[]) {
   const errors = [];
 
   // https://docs.npmjs.com/files/package.json#main
@@ -57,14 +66,14 @@ function checkFields(pkg, dir, otherFields) {
 
 // Check scripts line endings
 
-function normalize(dir, file) {
+function normalize(dir: string, file: string) {
   const filename = path.join(dir, file);
   const data = fs.readFileSync(filename, 'utf-8');
   const normalizedData = normalizeNewline(data);
   fs.writeFileSync(filename, normalizedData);
 }
 
-function normalizeField(pkg, dir, field) {
+function normalizeField(pkg: Pkg, dir: string, field: string) {
   if (pkg[field]) {
     if (pkg[field] instanceof Object) {
       Object.keys(pkg[field]).forEach((key) => normalize(dir, pkg[field][key]));
@@ -74,15 +83,15 @@ function normalizeField(pkg, dir, field) {
   }
 }
 
-function normalizeScripts(pkg, dir, files) {
+function normalizeScripts(pkg: Pkg, dir: string, files: string[]) {
   normalizeField(pkg, dir, 'bin');
   files.forEach((file) => normalize(dir, file));
 }
 
 // Main function
-export function pkgOk(dir, { fields = [], bin = [] } = {}) {
+export function pkgOk(dir: string, { fields = [], bin = [] }: Options = {}) {
   const pkgPath = path.join(dir, 'package.json');
-  const pkg = JSON.parse(fs.readFileSync(pkgPath));
+  const pkg = JSON.parse(fs.readFileSync(pkgPath).toString());
 
   // Check files exist in package.json fields and additional fields
   const errors = checkFields(pkg, dir, fields);
@@ -95,6 +104,4 @@ export function pkgOk(dir, { fields = [], bin = [] } = {}) {
 
   // Normalize line endings for bin scripts and additional scripts
   normalizeScripts(pkg, dir, bin);
-
-  return [];
 }
