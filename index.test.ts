@@ -15,6 +15,7 @@ describe('pkg-ok', () => {
         module: 'unknown.js',
         es2015: 'unknown.js',
         browser: 'unknown.js',
+        exports: 'unknown.js',
       }),
       '/B/package.json': JSON.stringify({
         bin: {
@@ -43,7 +44,7 @@ describe('pkg-ok', () => {
 
   it('checks /A', () => {
     expect(() => pkgOk(path.join('/A'))).toThrowError(
-      /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser/
+      /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/
     );
   });
 
