@@ -12,6 +12,7 @@ export interface Options {
 
 // TODO: add exports
 const FIELDS = [
+  'main', // https://docs.npmjs.com/files/package.json#main
   'bin',
   'types', // https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html used by TypeScript
   'typings', // https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html alternatively used by TypeScript
@@ -48,21 +49,11 @@ function checkField(pkg: Pkg, dir: string, field: string) {
 }
 
 function checkFields(pkg: Pkg, dir: string, otherFields: string[]) {
-  const errors = [];
-
-  // https://docs.npmjs.com/files/package.json#main
-  if (pkg.main && doesntExist(dir, pkg.main)) {
-    errors.push('main');
-  }
-
-  const fields = FIELDS.concat(otherFields || []);
+  const errors: string[] = [];
+  const fields = [...FIELDS, ...otherFields];
 
   // Check fields and add errors to the errors array
-  fields.forEach((field) => {
-    checkField(pkg, dir, field).forEach((error) => errors.push(error));
-  });
-
-  return errors;
+  return fields.flatMap((field) => checkField(pkg, dir, field));
 }
 
 // Check scripts line endings
