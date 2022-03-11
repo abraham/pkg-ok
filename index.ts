@@ -49,7 +49,6 @@ function checkField(pkg: Pkg, dir: string, field: string) {
 }
 
 function checkFields(pkg: Pkg, dir: string, otherFields: string[]) {
-  const errors: string[] = [];
   const fields = [...FIELDS, ...otherFields];
 
   // Check fields and add errors to the errors array
