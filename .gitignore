@@ -40,6 +40,4 @@ jspm_packages
 package-lock.json
 
 # Ignore compiled files
-*.js
-*.js.map
-*.d.ts
+dist
