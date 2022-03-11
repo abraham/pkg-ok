@@ -1,2 +1,6 @@
-.travis.yml
+.*
 index.test.js
+*.ts
+!*.d.ts
+tsconfig.json
+jest.config.mjs

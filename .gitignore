@@ -35,3 +35,11 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+# npm lock file
+package-lock.json
+
+# Ignore compiled files
+*.js
+*.js.map
+*.d.ts
