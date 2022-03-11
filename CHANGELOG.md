@@ -10,6 +10,7 @@
 - Format with Prettier
 - Convert to TypeScript
 - Add `exports` field
+- Use `main` as default branch
 
 ## 2.3.1
 
