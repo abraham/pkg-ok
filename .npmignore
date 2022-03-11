@@ -1,6 +1,5 @@
 .*
-index.test.js
-*.ts
-!*.d.ts
+*.test.*
+src
 tsconfig.json
 jest.config.mjs
