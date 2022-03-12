@@ -1,82 +1,11 @@
 import fs from 'fs';
-import normalizeNewline from 'normalize-newline';
 import path from 'path';
-
-// TODO: Remove any
-type Pkg = any;
+import { checkFields } from './fields.js';
+import { normalizeScripts } from './scripts.js';
 
 export interface Options {
   bin?: string[];
   fields?: string[];
-}
-
-// TODO: add exports
-const FIELDS = [
-  'main', // https://docs.npmjs.com/files/package.json#main
-  'bin',
-  'types', // https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html used by TypeScript
-  'typings', // https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html alternatively used by TypeScript
-  'module', // https://github.com/stereobooster/package.json#module used by rollup, webpack
-  'es2015', // https://github.com/stereobooster/package.json#es2015 used by Angular
-  'browser', // https://docs.npmjs.com/files/package.json#browser
-  'exports', // https://nodejs.org/api/packages.html#subpath-exports
-];
-
-// Check fields for file existence
-
-function doesNotExist(dir: string, file: string) {
-  return !fs.existsSync(path.join(dir, file));
-}
-
-function checkField(pkg: Pkg, dir: string, field: string) {
-  const errors = [];
-
-  if (pkg[field]) {
-    if (pkg[field] instanceof Object) {
-      Object.keys(pkg[field]).forEach((key) => {
-        if (doesNotExist(dir, pkg[field][key])) {
-          errors.push(`${field}.${key}`);
-        }
-      });
-    } else {
-      if (doesNotExist(dir, pkg[field])) {
-        errors.push(field);
-      }
-    }
-  }
-
-  return errors;
-}
-
-function checkFields(pkg: Pkg, dir: string, otherFields: string[]) {
-  const fields = [...FIELDS, ...otherFields];
-
-  // Check fields and add errors to the errors array
-  return fields.flatMap((field) => checkField(pkg, dir, field));
-}
-
-// Check scripts line endings
-
-function normalize(dir: string, file: string) {
-  const filename = path.join(dir, file);
-  const data = fs.readFileSync(filename, 'utf-8');
-  const normalizedData = normalizeNewline(data);
-  fs.writeFileSync(filename, normalizedData);
-}
-
-function normalizeField(pkg: Pkg, dir: string, field: string) {
-  if (pkg[field]) {
-    if (pkg[field] instanceof Object) {
-      Object.keys(pkg[field]).forEach((key) => normalize(dir, pkg[field][key]));
-    } else {
-      normalize(dir, pkg[field]);
-    }
-  }
-}
-
-function normalizeScripts(pkg: Pkg, dir: string, files: string[]) {
-  normalizeField(pkg, dir, 'bin');
-  files.forEach((file) => normalize(dir, file));
 }
 
 // Main function
