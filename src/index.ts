@@ -17,9 +17,7 @@ export function pkgOk(dir: string, { fields = [], bin = [] }: Options = {}) {
   const errors = checkFields(pkg, dir, fields);
 
   if (errors.length) {
-    const message = errors.map((error) => `${error} path doesn't exist in package.json`).join('\n');
-
-    throw new Error(message);
+    throw new Error(errors.join('\n'));
   }
 
   // Normalize line endings for bin scripts and additional scripts
