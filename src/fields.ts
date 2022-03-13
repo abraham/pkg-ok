@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { doesNotExistError, mustBeRelativeError } from './errors.js';
-import { Pkg } from './pkg.js';
+import { isObject, Pkg } from './pkg.js';
 
 interface Field {
   name: string;
@@ -73,23 +73,24 @@ function mustBeRelative(name: string, file: string): boolean {
 function checkField(pkg: Pkg, dir: string, field: string) {
   const errors: string[] = [];
 
-  if (pkg[field]) {
-    if (pkg[field] instanceof Object) {
-      Object.keys(pkg[field]).forEach((key) => {
-        if (doesNotExist(dir, pkg[field][key])) {
+  const value = pkg[field];
+  if (value) {
+    if (isObject(value)) {
+      Object.keys(value).forEach((key) => {
+        if (doesNotExist(dir, value[key])) {
           errors.push(doesNotExistError(`${field}.${key}`));
         }
 
-        if (mustBeRelative(field, pkg[field][key])) {
+        if (mustBeRelative(field, value[key])) {
           errors.push(mustBeRelativeError(`${field}.${key}`));
         }
       });
-    } else {
-      if (doesNotExist(dir, pkg[field])) {
+    } else if (typeof value === 'string') {
+      if (doesNotExist(dir, value)) {
         errors.push(doesNotExistError(field));
       }
 
-      if (mustBeRelative(field, pkg[field])) {
+      if (mustBeRelative(field, value)) {
         errors.push(mustBeRelativeError(field));
       }
     }

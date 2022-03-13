@@ -1,7 +1,7 @@
 import fs from 'fs';
 import normalizeNewline from 'normalize-newline';
 import path from 'path';
-import { Pkg } from './pkg.js';
+import { isObject, Pkg } from './pkg.js';
 
 function normalize(dir: string, file: string) {
   const filename = path.join(dir, file);
@@ -11,11 +11,12 @@ function normalize(dir: string, file: string) {
 }
 
 function normalizeField(pkg: Pkg, dir: string, field: string) {
-  if (pkg[field]) {
-    if (pkg[field] instanceof Object) {
-      Object.keys(pkg[field]).forEach((key) => normalize(dir, pkg[field][key]));
-    } else {
-      normalize(dir, pkg[field]);
+  const value = pkg[field];
+  if (value) {
+    if (isObject(value)) {
+      Object.keys(value).forEach((key) => normalize(dir, value[key]));
+    } else if (typeof value === 'string') {
+      normalize(dir, value);
     }
   }
 }
