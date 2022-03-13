@@ -1,6 +1,6 @@
 {
   "name": "pkg-ok",
-  "version": "3.0.0-next.4",
+  "version": "3.0.0-next.5",
   "description": "Checks package.json main and bin paths",
   "exports": "./dist/index.js",
   "bin": "./dist/bin.js",
