@@ -12,6 +12,7 @@
 - Add `exports` field
 - Use `main` as default branch
 - Move files to `src` and compile to `dist`
+- Check `main`, `bin`, and `browser` paths are relative
 
 ## 2.3.1
 
