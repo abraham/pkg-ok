@@ -13,6 +13,7 @@
 - Use `main` as default branch
 - Move files to `src` and compile to `dist`
 - Check `main`, `bin`, and `browser` paths are relative
+- Support passing a directory to the CLI `pkg-ok some/path`
 
 ## 2.3.1
 

@@ -42,8 +42,10 @@ const errorMessage = (error: unknown) => {
   }
 };
 
+const directory = cli.input[0] || process.cwd();
+
 try {
-  pkgOk(process.cwd(), { fields: cli.flags.field, bin: cli.flags.bin });
+  pkgOk(directory, { fields: cli.flags.field, bin: cli.flags.bin });
   console.log(chalk.green('Package ok'));
 } catch (error) {
   console.log(chalk.red('pkg-ok error'));

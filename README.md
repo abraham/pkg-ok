@@ -28,11 +28,23 @@ npm publish
 # Since main file doesn't exist, publish is blocked
 ```
 
-## Options
+## CLI
 
-`pkg-ok` can be configured to check additional `package.json` fields or bin files
+Check the `package.json` in the current directory.
 
+```sh
+pkg-ok
 ```
+
+Check the `package.json` in a specific directory.
+
+```sh
+pkg-ok some/directory
+```
+
+Check additional `package.json` fields or bin files.
+
+```sh
 pkg-ok --field someField --bin script.sh
 ```
 
