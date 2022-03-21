@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 3.0.0-next
+## 3.0.0
 
 - Require node 12+
 - Switch to ESM
