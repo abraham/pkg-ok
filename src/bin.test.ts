@@ -21,7 +21,7 @@ describe('pkg-ok', () => {
         es2015: 'unknown.js',
         browser: 'unknown.js',
         exports: 'unknown.js',
-      })
+      }),
     );
     fs.mkdirSync(path.join(directory, 'B'));
     fs.writeFileSync(
@@ -31,14 +31,14 @@ describe('pkg-ok', () => {
           X: 'unknown.js',
           Y: 'unknown.js',
         },
-      })
+      }),
     );
     fs.mkdirSync(path.join(directory, 'C'));
     fs.writeFileSync(
       path.join(directory, 'C/package.json'),
       JSON.stringify({
         foo: 'unknown.js',
-      })
+      }),
     );
     fs.mkdirSync(path.join(directory, 'D'));
     fs.writeFileSync(
@@ -48,14 +48,14 @@ describe('pkg-ok', () => {
           bar: 'bar',
           baz: 'baz',
         },
-      })
+      }),
     );
     fs.mkdirSync(path.join(directory, 'E'));
     fs.writeFileSync(
       path.join(directory, 'E/package.json'),
       JSON.stringify({
         bin: './script.js',
-      })
+      }),
     );
     fs.writeFileSync(path.join(directory, 'E/script.js'), 'foo\r\nbar');
     fs.writeFileSync(path.join(directory, 'E/another-script.js'), 'baz\r\nqux');
@@ -68,7 +68,7 @@ describe('pkg-ok', () => {
           './dist/lib.cjs.js': './dist/lib.cjs.browser.js',
           './dist/lib.esm.js': './dist/lib.esm.browser.js',
         },
-      })
+      }),
     );
     fs.writeFileSync(path.join(directory, 'F/dist/lib.cjs.browser.js'), 'cjs');
     fs.writeFileSync(path.join(directory, 'F/dist/lib.esm.browser.js'), 'esm');
@@ -81,7 +81,7 @@ describe('pkg-ok', () => {
           'dist/lib.cjs.js': './dist/lib.cjs.browser.js',
           './dist/lib.esm.js': 'dist/lib.esm.browser.js',
         },
-      })
+      }),
     );
     fs.writeFileSync(path.join(directory, 'G/dist/lib.cjs.js'), './dist/lib.cjs.browser.js');
   });
@@ -89,7 +89,7 @@ describe('pkg-ok', () => {
   it('checks /A', (done) => {
     execFile('node', ['dist/bin.js', path.join(directory, 'A')], (_error, stdout) => {
       expect(stdout).toMatch(
-        /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/
+        /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
       );
       done();
     });
@@ -109,7 +109,7 @@ describe('pkg-ok', () => {
       (_error, stdout) => {
         expect(stdout).toMatch(/foo/);
         done();
-      }
+      },
     );
   });
 
@@ -120,7 +120,7 @@ describe('pkg-ok', () => {
       (_error, stdout) => {
         expect(stdout).toMatch(/foo\.bar[\s\S]*foo\.baz/);
         done();
-      }
+      },
     );
   });
 
@@ -131,10 +131,10 @@ describe('pkg-ok', () => {
       () => {
         expect(fs.readFileSync(path.join(directory, '/E/script.js'), 'utf-8')).toEqual('foo\nbar');
         expect(fs.readFileSync(path.join(directory, '/E/another-script.js'), 'utf-8')).toEqual(
-          'baz\nqux'
+          'baz\nqux',
         );
         done();
-      }
+      },
     );
   });
 
@@ -144,13 +144,13 @@ describe('pkg-ok', () => {
       ['dist/bin.js', path.join(directory, 'F'), '--bin', 'another-script.js'],
       () => {
         expect(
-          fs.readFileSync(path.join(directory, '/F/dist/lib.cjs.browser.js'), 'utf-8')
+          fs.readFileSync(path.join(directory, '/F/dist/lib.cjs.browser.js'), 'utf-8'),
         ).toEqual('cjs');
         expect(
-          fs.readFileSync(path.join(directory, '/F/dist/lib.esm.browser.js'), 'utf-8')
+          fs.readFileSync(path.join(directory, '/F/dist/lib.esm.browser.js'), 'utf-8'),
         ).toEqual('esm');
         done();
-      }
+      },
     );
   });
 
@@ -161,7 +161,7 @@ describe('pkg-ok', () => {
       (_error, stdout) => {
         expect(stdout).toMatch(/browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/);
         done();
-      }
+      },
     );
   });
 });

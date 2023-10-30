@@ -31,7 +31,7 @@ const cli = meow(
         isMultiple: true,
       },
     },
-  }
+  },
 );
 
 const errorMessage = (error: unknown) => {
