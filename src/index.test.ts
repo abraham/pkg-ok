@@ -59,7 +59,7 @@ describe('pkg-ok', () => {
 
   it('checks /A', () => {
     expect(() => pkgOk(path.join('/A'))).toThrowError(
-      /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/
+      /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
     );
   });
 
@@ -73,7 +73,7 @@ describe('pkg-ok', () => {
 
   it('checks /D', () => {
     expect(() => pkgOk(path.join('/D'), { fields: ['foo'] })).toThrowError(
-      /foo\.bar[\s\S]*foo\.baz/
+      /foo\.bar[\s\S]*foo\.baz/,
     );
   });
 
@@ -91,7 +91,7 @@ describe('pkg-ok', () => {
 
   it('checks /G', () => {
     expect(() => pkgOk(path.join('/G'))).toThrowError(
-      /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/
+      /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/,
     );
   });
 });
