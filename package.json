@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "chalk": "^5.0.0",
-    "meow": "^11.0.0",
+    "meow": "^13.0.0",
     "normalize-newline": "^4.0.0"
   },
   "engines": {
