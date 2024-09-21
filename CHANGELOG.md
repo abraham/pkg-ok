@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 4.0.0
+
+- Require Node 18+
+
 ## 3.0.0
 
 - Require node 12+
