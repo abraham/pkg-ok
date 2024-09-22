@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import { existsSync } from 'fs';
+import { join } from 'path';
 import { doesNotExistError, mustBeRelativeError } from './errors.js';
 import { isObject, Pkg } from './pkg.js';
 
@@ -54,7 +54,7 @@ const FIELDS: Readonly<Field[]> = [
 const FIELD_NAMES: Readonly<string[]> = FIELDS.map((field) => field.name);
 
 function doesNotExist(dir: string, file: string) {
-  return !fs.existsSync(path.join(dir, file));
+  return !existsSync(join(dir, file));
 }
 
 function findField(name: string) {

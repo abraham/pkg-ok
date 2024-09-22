@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
-import fs from 'fs';
+import { readFileSync } from 'fs';
 import mock from 'mock-fs';
-import path from 'path';
+import { join } from 'path';
 import { pkgOk } from './index.js';
 
 describe('pkg-ok', () => {
@@ -58,39 +58,37 @@ describe('pkg-ok', () => {
   afterEach(() => mock.restore());
 
   it('checks /A', () => {
-    expect(() => pkgOk(path.join('/A'))).toThrowError(
+    expect(() => pkgOk(join('/A'))).toThrowError(
       /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
     );
   });
 
   it('checks /B', () => {
-    expect(() => pkgOk(path.join('/B'))).toThrowError(/bin\.X[\s\S]*bin\.Y/);
+    expect(() => pkgOk(join('/B'))).toThrowError(/bin\.X[\s\S]*bin\.Y/);
   });
 
   it('checks /C', () => {
-    expect(() => pkgOk(path.join('/C'), { fields: ['foo'] })).toThrowError(/foo/);
+    expect(() => pkgOk(join('/C'), { fields: ['foo'] })).toThrowError(/foo/);
   });
 
   it('checks /D', () => {
-    expect(() => pkgOk(path.join('/D'), { fields: ['foo'] })).toThrowError(
-      /foo\.bar[\s\S]*foo\.baz/,
-    );
+    expect(() => pkgOk(join('/D'), { fields: ['foo'] })).toThrowError(/foo\.bar[\s\S]*foo\.baz/);
   });
 
   it('checks /E', () => {
-    pkgOk(path.join('/E'), { bin: ['another-script.js'] });
-    expect(fs.readFileSync('/E/script.js', 'utf-8')).toEqual('foo\nbar');
-    expect(fs.readFileSync('/E/another-script.js', 'utf-8')).toEqual('baz\nqux');
+    pkgOk(join('/E'), { bin: ['another-script.js'] });
+    expect(readFileSync('/E/script.js', 'utf-8')).toEqual('foo\nbar');
+    expect(readFileSync('/E/another-script.js', 'utf-8')).toEqual('baz\nqux');
   });
 
   it('checks /F', () => {
-    pkgOk(path.join('/F'));
-    expect(fs.readFileSync('/F/dist/lib.cjs.browser.js', 'utf-8')).toEqual('cjs');
-    expect(fs.readFileSync('/F/dist/lib.esm.browser.js', 'utf-8')).toEqual('esm');
+    pkgOk(join('/F'));
+    expect(readFileSync('/F/dist/lib.cjs.browser.js', 'utf-8')).toEqual('cjs');
+    expect(readFileSync('/F/dist/lib.esm.browser.js', 'utf-8')).toEqual('esm');
   });
 
   it('checks /G', () => {
-    expect(() => pkgOk(path.join('/G'))).toThrowError(
+    expect(() => pkgOk(join('/G'))).toThrowError(
       /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/,
     );
   });
