@@ -62,7 +62,7 @@
     "normalize-newline": "^4.0.0"
   },
   "engines": {
-    "node": "^18.0.0"
+    "node": "^18.0.0 || ^20.0.0 || ^22.0.0"
   },
   "husky": {
     "hooks": {
