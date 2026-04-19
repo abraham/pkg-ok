@@ -10,13 +10,15 @@ export default [
     ignores: ['dist'],
   },
   {
-    ...js.configs.recommended,
     files: ['**/*.{cjs,mjs,js}'],
     languageOptions: {
       ...js.configs.recommended.languageOptions,
       globals: {
         ...globals.node,
       },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
     },
   },
   {
@@ -37,8 +39,13 @@ export default [
     },
   },
   {
-    ...jest.configs['flat/recommended'],
     files: ['**/*.test.ts'],
+    plugins: {
+      jest,
+    },
+    languageOptions: {
+      globals: jest.environments.globals.globals,
+    },
     rules: {
       ...jest.configs['flat/recommended'].rules,
       'jest/no-alias-methods': 'off',
