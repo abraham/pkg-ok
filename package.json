@@ -43,7 +43,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@types/mock-fs": "^4.0.0",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^8.58.2",
     "@typescript-eslint/parser": "^8.58.2",
     "eslint": "^10.2.1",
@@ -64,7 +64,7 @@
     "normalize-newline": "^4.0.0"
   },
   "engines": {
-    "node": "^18.0.0 || ^20.0.0 || ^22.0.0"
+    "node": "^20.0.0 || ^22.0.0"
   },
   "husky": {
     "hooks": {
