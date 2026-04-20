@@ -21,12 +21,12 @@ const cli = meow(
     importMeta: import.meta,
     flags: {
       field: {
-        alias: 'f',
+        shortFlag: 'f',
         type: 'string',
         isMultiple: true,
       },
       bin: {
-        alias: 'b',
+        shortFlag: 'b',
         type: 'string',
         isMultiple: true,
       },
