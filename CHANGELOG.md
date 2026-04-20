@@ -1,13 +1,8 @@
 # CHANGELOG
 
-## 5.0.0
-
-- Drop Node 18 support
-- Support Node 20, 22, and 24
-
 ## 4.0.0
 
-- Require Node 18+
+- Require Node 20, 22, or 24
 
 ## 3.0.0
 
