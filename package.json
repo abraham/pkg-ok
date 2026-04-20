@@ -11,8 +11,7 @@
     "format": "prettier --write .",
     "build": "rm -rf dist && tsc",
     "lint": "prettier --check . && eslint . --ext .ts --ext .cjs --ext .mjs",
-    "prepublishOnly": "npm test && node ./dist/bin",
-    "prepare": "husky install"
+    "prepublishOnly": "npm test && node ./dist/bin"
   },
   "repository": {
     "type": "git",
@@ -51,7 +50,6 @@
     "eslint-plugin-jest": "^29.15.2",
     "eslint-plugin-n": "^17.10.3",
     "globals": "^16.4.0",
-    "husky": "^9.1.6",
     "jest": "^30.3.0",
     "mock-fs": "^5.0.0",
     "prettier": "3.6.2",
@@ -65,10 +63,5 @@
   },
   "engines": {
     "node": "^20.0.0 || ^22.0.0 || ^24.0.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm test"
-    }
   }
 }
