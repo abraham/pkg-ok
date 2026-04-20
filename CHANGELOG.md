@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.0.0
+
+- Drop Node 18 support
+
 ## 4.0.0
 
 - Require Node 18+
