@@ -58,21 +58,21 @@ describe('pkg-ok', () => {
   afterEach(() => mock.restore());
 
   it('checks /A', () => {
-    expect(() => pkgOk(join('/A'))).toThrowError(
+    expect(() => pkgOk(join('/A'))).toThrow(
       /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
     );
   });
 
   it('checks /B', () => {
-    expect(() => pkgOk(join('/B'))).toThrowError(/bin\.X[\s\S]*bin\.Y/);
+    expect(() => pkgOk(join('/B'))).toThrow(/bin\.X[\s\S]*bin\.Y/);
   });
 
   it('checks /C', () => {
-    expect(() => pkgOk(join('/C'), { fields: ['foo'] })).toThrowError(/foo/);
+    expect(() => pkgOk(join('/C'), { fields: ['foo'] })).toThrow(/foo/);
   });
 
   it('checks /D', () => {
-    expect(() => pkgOk(join('/D'), { fields: ['foo'] })).toThrowError(/foo\.bar[\s\S]*foo\.baz/);
+    expect(() => pkgOk(join('/D'), { fields: ['foo'] })).toThrow(/foo\.bar[\s\S]*foo\.baz/);
   });
 
   it('checks /E', () => {
@@ -88,7 +88,7 @@ describe('pkg-ok', () => {
   });
 
   it('checks /G', () => {
-    expect(() => pkgOk(join('/G'))).toThrowError(
+    expect(() => pkgOk(join('/G'))).toThrow(
       /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/,
     );
   });
