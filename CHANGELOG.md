@@ -3,6 +3,7 @@
 ## 5.0.0
 
 - Drop Node 18 support
+- Support Node 20, 22, and 24
 
 ## 4.0.0
 
