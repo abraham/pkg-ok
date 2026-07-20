@@ -59,7 +59,7 @@
   "dependencies": {
     "chalk": "^5.0.0",
     "meow": "^14.1.0",
-    "normalize-newline": "^4.0.0"
+    "normalize-newline": "^5.0.0"
   },
   "engines": {
     "node": "^20.0.0 || ^22.0.0 || ^24.0.0"
