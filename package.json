@@ -54,7 +54,7 @@
     "mock-fs": "^5.0.0",
     "prettier": "3.9.6",
     "type-fest": "^5.6.0",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "chalk": "^6.0.0",
