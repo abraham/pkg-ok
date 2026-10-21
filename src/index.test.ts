@@ -52,6 +52,13 @@ describe('pkg-ok', () => {
         },
       }),
       '/G/dist/lib.cjs.js': './dist/lib.cjs.browser.js',
+      '/H/package.json': JSON.stringify({
+        dependencies: { 'local-dep': '^1.0.0' },
+        bin: './script.js',
+      }),
+      '/H/node_modules/local-dep': mock.symlink({ path: '/local-dep' }),
+      '/H/script.js': 'foo\r\nbar',
+      '/local-dep/package.json': '{}',
     });
   });
 
@@ -91,5 +98,10 @@ describe('pkg-ok', () => {
     expect(() => pkgOk(join('/G'))).toThrow(
       /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/,
     );
+  });
+
+  it('rejects locally linked direct dependencies before normalizing scripts', () => {
+    expect(() => pkgOk('/H')).toThrow(/Dependency "local-dep" is linked to a local package/);
+    expect(readFileSync('/H/script.js', 'utf-8')).toEqual('foo\r\nbar');
   });
 });
