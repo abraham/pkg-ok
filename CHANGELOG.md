@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+
+- Detect direct dependencies linked to local project directories
+
 ## 4.0.0
 
 - Require Node 20, 22, or 24
