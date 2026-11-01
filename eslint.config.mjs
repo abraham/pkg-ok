@@ -3,11 +3,25 @@ import tsEslintPlugin from '@typescript-eslint/eslint-plugin';
 import tsEslintParser from '@typescript-eslint/parser';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import jest from 'eslint-plugin-jest';
+import nodePlugin from 'eslint-plugin-n';
 import globals from 'globals';
 
 export default [
   {
     ignores: ['dist'],
+  },
+  nodePlugin.configs['flat/recommended-module'],
+  {
+    settings: {
+      n: {
+        convertPath: { 'src/**/*.ts': ['^src/(.+)\\.ts$', 'dist/$1.js'] },
+      },
+    },
+    rules: {
+      'n/no-missing-import': ['error', { ignoreTypeImport: true }],
+      'n/no-unpublished-import': ['error', { ignoreTypeImport: true }],
+      'n/prefer-node-protocol': 'error',
+    },
   },
   {
     files: ['**/*.{cjs,mjs,js}'],

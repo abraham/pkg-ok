@@ -1,4 +1,4 @@
-import { PackageJson } from 'type-fest';
+import type { PackageJson } from 'type-fest';
 
 export type Pkg = PackageJson & { [key: string]: unknown };
 
