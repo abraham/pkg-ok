@@ -1,13 +1,22 @@
-import { beforeAll, describe, expect, it } from '@jest/globals';
+import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { before, describe, it } from 'node:test';
 
 let directory = '';
 
+function run(...args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
+  return new Promise((resolve) => {
+    execFile('node', ['dist/bin.js', ...args], (error, stdout, stderr) => {
+      resolve({ code: typeof error?.code === 'number' ? error.code : 0, stdout, stderr });
+    });
+  });
+}
+
 describe('pkg-ok', () => {
-  beforeAll(() => {
+  before(() => {
     directory = mkdtempSync(join(tmpdir(), 'pkg-ok-'));
     mkdirSync(join(directory, 'A'));
     writeFileSync(
@@ -86,81 +95,52 @@ describe('pkg-ok', () => {
     writeFileSync(join(directory, 'G/dist/lib.cjs.js'), './dist/lib.cjs.browser.js');
   });
 
-  it('checks /A', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'A')], (error, stdout, stderr) => {
-      expect(error?.code).toBe(1);
-      expect(stdout).toBe('');
-      expect(stderr).toMatch(
-        /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
-      );
-      done();
-    });
-  });
-
-  it('checks /B', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'B')], (error, _stdout, stderr) => {
-      expect(error?.code).toBe(1);
-      expect(stderr).toMatch(/bin\.X[\s\S]*bin\.Y/);
-      done();
-    });
-  });
-
-  it('checks /C', (done) => {
-    execFile(
-      'node',
-      ['dist/bin.js', join(directory, 'C'), '--field', 'foo'],
-      (error, _stdout, stderr) => {
-        expect(error?.code).toBe(1);
-        expect(stderr).toMatch(/foo/);
-        done();
-      },
+  it('checks /A', async () => {
+    const { code, stdout, stderr } = await run(join(directory, 'A'));
+    assert.equal(code, 1);
+    assert.equal(stdout, '');
+    assert.match(
+      stderr,
+      /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
     );
   });
 
-  it('checks /D', (done) => {
-    execFile(
-      'node',
-      ['dist/bin.js', join(directory, 'D'), '--field', 'foo'],
-      (error, _stdout, stderr) => {
-        expect(error?.code).toBe(1);
-        expect(stderr).toMatch(/foo\.bar[\s\S]*foo\.baz/);
-        done();
-      },
-    );
+  it('checks /B', async () => {
+    const { code, stderr } = await run(join(directory, 'B'));
+    assert.equal(code, 1);
+    assert.match(stderr, /bin\.X[\s\S]*bin\.Y/);
   });
 
-  it('checks /E', (done) => {
-    execFile(
-      'node',
-      ['dist/bin.js', join(directory, 'E'), '--bin', 'another-script.js'],
-      (error, stdout, stderr) => {
-        expect(error).toBeNull();
-        expect(stdout).toMatch(/Package ok/);
-        expect(stderr).toBe('');
-        expect(readFileSync(join(directory, '/E/script.js'), 'utf-8')).toEqual('foo\nbar');
-        expect(readFileSync(join(directory, '/E/another-script.js'), 'utf-8')).toEqual('baz\nqux');
-        done();
-      },
-    );
+  it('checks /C', async () => {
+    const { code, stderr } = await run(join(directory, 'C'), '--field', 'foo');
+    assert.equal(code, 1);
+    assert.match(stderr, /foo/);
   });
 
-  it('checks /F', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'F'), '--bin', 'another-script.js'], () => {
-      expect(readFileSync(join(directory, '/F/dist/lib.cjs.browser.js'), 'utf-8')).toEqual('cjs');
-      expect(readFileSync(join(directory, '/F/dist/lib.esm.browser.js'), 'utf-8')).toEqual('esm');
-      done();
-    });
+  it('checks /D', async () => {
+    const { code, stderr } = await run(join(directory, 'D'), '--field', 'foo');
+    assert.equal(code, 1);
+    assert.match(stderr, /foo\.bar[\s\S]*foo\.baz/);
   });
 
-  it('checks /G', (done) => {
-    execFile(
-      'node',
-      ['dist/bin.js', join(directory, 'G'), '--bin', 'another-script.js'],
-      (error, _stdout, stderr) => {
-        expect(error?.code).toBe(1);
-        expect(stderr).toMatch(/browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/);
-        done();
-      },
-    );
+  it('checks /E', async () => {
+    const { code, stdout, stderr } = await run(join(directory, 'E'), '--bin', 'another-script.js');
+    assert.equal(code, 0);
+    assert.match(stdout, /Package ok/);
+    assert.equal(stderr, '');
+    assert.equal(readFileSync(join(directory, '/E/script.js'), 'utf-8'), 'foo\nbar');
+    assert.equal(readFileSync(join(directory, '/E/another-script.js'), 'utf-8'), 'baz\nqux');
+  });
+
+  it('checks /F', async () => {
+    await run(join(directory, 'F'), '--bin', 'another-script.js');
+    assert.equal(readFileSync(join(directory, '/F/dist/lib.cjs.browser.js'), 'utf-8'), 'cjs');
+    assert.equal(readFileSync(join(directory, '/F/dist/lib.esm.browser.js'), 'utf-8'), 'esm');
+  });
+
+  it('checks /G', async () => {
+    const { code, stderr } = await run(join(directory, 'G'), '--bin', 'another-script.js');
+    assert.equal(code, 1);
+    assert.match(stderr, /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/);
   });
 });

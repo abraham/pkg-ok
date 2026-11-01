@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { doesNotExistError, mustBeRelativeError } from './errors.js';
-import { isObject, type Pkg } from './pkg.js';
+import { doesNotExistError, mustBeRelativeError } from './errors.ts';
+import { isObject, type Pkg } from './pkg.ts';
 
 interface Field {
   name: string;

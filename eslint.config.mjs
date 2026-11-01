@@ -1,7 +1,6 @@
 import js from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 import eslintConfigPrettier from 'eslint-config-prettier';
-import jest from 'eslint-plugin-jest';
 import nodePlugin from 'eslint-plugin-n';
 import globals from 'globals';
 import { fileURLToPath } from 'node:url';
@@ -49,22 +48,16 @@ export default defineConfig(
       },
     },
     rules: {
-      // Allows the expect(() => fn()).toThrow() idiom
+      // Allows the assert.throws(() => fn()) idiom
       '@typescript-eslint/no-confusing-void-expression': ['error', { ignoreArrowShorthand: true }],
-    },
-  },
-  {
-    files: ['**/*.test.ts'],
-    plugins: {
-      jest,
-    },
-    languageOptions: {
-      globals: jest.environments.globals.globals,
-    },
-    rules: {
-      ...jest.configs['flat/recommended'].rules,
-      'jest/no-alias-methods': 'off',
-      'jest/no-done-callback': 'off',
+      '@typescript-eslint/no-floating-promises': [
+        'error',
+        {
+          allowForKnownSafeCalls: [
+            { from: 'package', package: 'node:test', name: ['describe', 'it', 'suite', 'test'] },
+          ],
+        },
+      ],
     },
   },
   eslintConfigPrettier,

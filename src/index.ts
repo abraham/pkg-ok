@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { checkFields } from './fields.js';
-import { isObject, type Pkg } from './pkg.js';
-import { normalizeScripts } from './scripts.js';
+import { checkFields } from './fields.ts';
+import { isObject, type Pkg } from './pkg.ts';
+import { normalizeScripts } from './scripts.ts';
 
 export interface Options {
   bin?: string[] | undefined;
