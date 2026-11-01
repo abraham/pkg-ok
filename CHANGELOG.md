@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+
+- Require Node 22, 24, or 26
+
 ## 4.0.0
 
 - Require Node 20, 22, or 24
