@@ -48,7 +48,7 @@ try {
   pkgOk(directory, { fields: cli.flags.field, bin: cli.flags.bin });
   console.log(chalk.green('Package ok'));
 } catch (error) {
-  console.log(chalk.red('pkg-ok error'));
-  console.log(chalk.red(errorMessage(error)));
-  process.exit(1);
+  console.error(chalk.red('pkg-ok error'));
+  console.error(chalk.red(errorMessage(error)));
+  process.exitCode = 1;
 }

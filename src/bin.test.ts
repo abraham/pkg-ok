@@ -87,8 +87,10 @@ describe('pkg-ok', () => {
   });
 
   it('checks /A', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'A')], (_error, stdout) => {
-      expect(stdout).toMatch(
+    execFile('node', ['dist/bin.js', join(directory, 'A')], (error, stdout, stderr) => {
+      expect(error?.code).toBe(1);
+      expect(stdout).toBe('');
+      expect(stderr).toMatch(
         /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
       );
       done();
@@ -96,32 +98,50 @@ describe('pkg-ok', () => {
   });
 
   it('checks /B', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'B')], (_error, stdout) => {
-      expect(stdout).toMatch(/bin\.X[\s\S]*bin\.Y/);
+    execFile('node', ['dist/bin.js', join(directory, 'B')], (error, _stdout, stderr) => {
+      expect(error?.code).toBe(1);
+      expect(stderr).toMatch(/bin\.X[\s\S]*bin\.Y/);
       done();
     });
   });
 
   it('checks /C', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'C'), '--field', 'foo'], (_error, stdout) => {
-      expect(stdout).toMatch(/foo/);
-      done();
-    });
+    execFile(
+      'node',
+      ['dist/bin.js', join(directory, 'C'), '--field', 'foo'],
+      (error, _stdout, stderr) => {
+        expect(error?.code).toBe(1);
+        expect(stderr).toMatch(/foo/);
+        done();
+      },
+    );
   });
 
   it('checks /D', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'D'), '--field', 'foo'], (_error, stdout) => {
-      expect(stdout).toMatch(/foo\.bar[\s\S]*foo\.baz/);
-      done();
-    });
+    execFile(
+      'node',
+      ['dist/bin.js', join(directory, 'D'), '--field', 'foo'],
+      (error, _stdout, stderr) => {
+        expect(error?.code).toBe(1);
+        expect(stderr).toMatch(/foo\.bar[\s\S]*foo\.baz/);
+        done();
+      },
+    );
   });
 
   it('checks /E', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'E'), '--bin', 'another-script.js'], () => {
-      expect(readFileSync(join(directory, '/E/script.js'), 'utf-8')).toEqual('foo\nbar');
-      expect(readFileSync(join(directory, '/E/another-script.js'), 'utf-8')).toEqual('baz\nqux');
-      done();
-    });
+    execFile(
+      'node',
+      ['dist/bin.js', join(directory, 'E'), '--bin', 'another-script.js'],
+      (error, stdout, stderr) => {
+        expect(error).toBeNull();
+        expect(stdout).toMatch(/Package ok/);
+        expect(stderr).toBe('');
+        expect(readFileSync(join(directory, '/E/script.js'), 'utf-8')).toEqual('foo\nbar');
+        expect(readFileSync(join(directory, '/E/another-script.js'), 'utf-8')).toEqual('baz\nqux');
+        done();
+      },
+    );
   });
 
   it('checks /F', (done) => {
@@ -136,8 +156,9 @@ describe('pkg-ok', () => {
     execFile(
       'node',
       ['dist/bin.js', join(directory, 'G'), '--bin', 'another-script.js'],
-      (_error, stdout) => {
-        expect(stdout).toMatch(/browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/);
+      (error, _stdout, stderr) => {
+        expect(error?.code).toBe(1);
+        expect(stderr).toMatch(/browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/);
         done();
       },
     );
