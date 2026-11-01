@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { doesNotExistError, mustBeRelativeError } from './errors.js';
-import { isObject, Pkg } from './pkg.js';
+import { isObject, type Pkg } from './pkg.js';
 
 interface Field {
   name: string;
@@ -98,7 +98,7 @@ function checkField(pkg: Pkg, dir: string, field: string) {
   return checkValue(field, field, dir, pkg[field]);
 }
 
-export function checkFields(pkg: Pkg, dir: string, otherFields: string[]) {
+export function checkFields(pkg: Pkg, dir: string, otherFields: string[]): string[] {
   const fields = [...FIELD_NAMES, ...otherFields];
 
   // Check fields and add errors to the errors array

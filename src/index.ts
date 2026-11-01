@@ -5,12 +5,12 @@ import { isObject, type Pkg } from './pkg.js';
 import { normalizeScripts } from './scripts.js';
 
 export interface Options {
-  bin?: string[];
-  fields?: string[];
+  bin?: string[] | undefined;
+  fields?: string[] | undefined;
 }
 
 // Main function
-export function pkgOk(dir: string, { fields = [], bin = [] }: Options = {}) {
+export function pkgOk(dir: string, { fields = [], bin = [] }: Options = {}): void {
   const pkgPath = join(dir, 'package.json');
   const json: unknown = JSON.parse(readFileSync(pkgPath, 'utf8'));
   if (!isObject(json) || Array.isArray(json)) {
