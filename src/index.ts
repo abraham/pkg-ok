@@ -11,7 +11,7 @@ export interface Options {
 // Main function
 export function pkgOk(dir: string, { fields = [], bin = [] }: Options = {}) {
   const pkgPath = join(dir, 'package.json');
-  const pkg = JSON.parse(readFileSync(pkgPath).toString());
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
 
   // Check files exist in package.json fields and additional fields
   const errors = checkFields(pkg, dir, fields);
