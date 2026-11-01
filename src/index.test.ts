@@ -55,6 +55,35 @@ describe('pkg-ok', () => {
         },
       }),
       '/G/dist/lib.cjs.js': './dist/lib.cjs.browser.js',
+      '/H/package.json': JSON.stringify({
+        exports: {
+          '.': {
+            types: './index.d.ts',
+            import: './index.js',
+            require: './index.cjs',
+          },
+          './features/*.js': './features/*.js',
+          './internal/*': null,
+          './package.json': './package.json',
+        },
+        browser: {
+          fs: false,
+          './index.js': './browser.js',
+        },
+      }),
+      '/H/index.d.ts': '',
+      '/H/index.js': '',
+      '/H/index.cjs': '',
+      '/H/browser.js': '',
+      '/I/package.json': JSON.stringify({
+        exports: {
+          '.': {
+            node: { import: './missing.mjs' },
+            default: ['./index.js', './fallback.js'],
+          },
+        },
+      }),
+      '/I/index.js': '',
     };
     for (const [file, content] of Object.entries(files)) {
       mkdirSync(dirname(join(directory, file)), { recursive: true });
@@ -99,6 +128,16 @@ describe('pkg-ok', () => {
   it('checks /G', () => {
     expect(() => pkgOk(join(directory, 'G'))).toThrow(
       /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/,
+    );
+  });
+
+  it('checks /H', () => {
+    expect(() => pkgOk(join(directory, 'H'))).not.toThrow();
+  });
+
+  it('checks /I', () => {
+    expect(() => pkgOk(join(directory, 'I'))).toThrow(
+      /^exports\.\.\.node\.import path[^\n]*\nexports\.\.\.default\.1 path[^\n]*$/,
     );
   });
 });

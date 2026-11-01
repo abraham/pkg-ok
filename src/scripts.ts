@@ -14,7 +14,11 @@ function normalizeField(pkg: Pkg, dir: string, field: string) {
   const value = pkg[field];
   if (value) {
     if (isObject(value)) {
-      Object.keys(value).forEach((key) => normalize(dir, value[key]));
+      Object.values(value).forEach((file) => {
+        if (typeof file === 'string') {
+          normalize(dir, file);
+        }
+      });
     } else if (typeof value === 'string') {
       normalize(dir, value);
     }

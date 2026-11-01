@@ -70,33 +70,32 @@ function mustBeRelative(name: string, file: string): boolean {
   return !file.startsWith('./');
 }
 
-function checkField(pkg: Pkg, dir: string, field: string) {
+function checkValue(field: string, path: string, dir: string, value: unknown): string[] {
+  if (isObject(value)) {
+    return Object.entries(value).flatMap(([key, nested]) =>
+      checkValue(field, `${path}.${key}`, dir, nested),
+    );
+  }
+
+  // Subpath patterns like ./features/*.js match many files, not one
+  if (typeof value !== 'string' || !value || value.includes('*')) {
+    return [];
+  }
+
   const errors: string[] = [];
+  if (doesNotExist(dir, value)) {
+    errors.push(doesNotExistError(path));
+  }
 
-  const value = pkg[field];
-  if (value) {
-    if (isObject(value)) {
-      Object.keys(value).forEach((key) => {
-        if (doesNotExist(dir, value[key])) {
-          errors.push(doesNotExistError(`${field}.${key}`));
-        }
-
-        if (mustBeRelative(field, value[key])) {
-          errors.push(mustBeRelativeError(`${field}.${key}`));
-        }
-      });
-    } else if (typeof value === 'string') {
-      if (doesNotExist(dir, value)) {
-        errors.push(doesNotExistError(field));
-      }
-
-      if (mustBeRelative(field, value)) {
-        errors.push(mustBeRelativeError(field));
-      }
-    }
+  if (mustBeRelative(field, value)) {
+    errors.push(mustBeRelativeError(path));
   }
 
   return errors;
+}
+
+function checkField(pkg: Pkg, dir: string, field: string) {
+  return checkValue(field, field, dir, pkg[field]);
 }
 
 export function checkFields(pkg: Pkg, dir: string, otherFields: string[]) {
