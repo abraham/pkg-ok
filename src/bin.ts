@@ -42,7 +42,7 @@ const errorMessage = (error: unknown) => {
   }
 };
 
-const directory = cli.input[0] || process.cwd();
+const directory = cli.input[0] ?? process.cwd();
 
 try {
   pkgOk(directory, { fields: cli.flags.field, bin: cli.flags.bin });

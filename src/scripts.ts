@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import normalizeNewline from 'normalize-newline';
 import { join } from 'node:path';
-import { isObject, Pkg } from './pkg.js';
+import { isObject, type Pkg } from './pkg.js';
 
 function normalize(dir: string, file: string) {
   const filename = join(dir, file);
@@ -25,7 +25,7 @@ function normalizeField(pkg: Pkg, dir: string, field: string) {
   }
 }
 
-export function normalizeScripts(pkg: Pkg, dir: string, files: string[]) {
+export function normalizeScripts(pkg: Pkg, dir: string, files: string[]): void {
   normalizeField(pkg, dir, 'bin');
   files.forEach((file) => normalize(dir, file));
 }
