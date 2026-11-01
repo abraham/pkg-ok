@@ -19,10 +19,18 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm install
       - run: npm test
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: package.json
+      - run: npm install
       - run: npm run lint
   index-required:
     if: ${{ !cancelled() }}
-    needs: [test]
+    needs: [test, lint]
     runs-on: ubuntu-latest
     permissions: {}
     steps:
