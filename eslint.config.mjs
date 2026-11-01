@@ -1,12 +1,13 @@
 import js from '@eslint/js';
-import tsEslintPlugin from '@typescript-eslint/eslint-plugin';
-import tsEslintParser from '@typescript-eslint/parser';
+import { defineConfig } from 'eslint/config';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import jest from 'eslint-plugin-jest';
 import nodePlugin from 'eslint-plugin-n';
 import globals from 'globals';
+import { fileURLToPath } from 'node:url';
+import tseslint from 'typescript-eslint';
 
-export default [
+export default defineConfig(
   {
     ignores: ['dist'],
   },
@@ -37,19 +38,19 @@ export default [
   },
   {
     files: ['**/*.ts'],
+    extends: [tseslint.configs.strictTypeChecked, tseslint.configs.stylisticTypeChecked],
     languageOptions: {
-      parser: tsEslintParser,
-      ecmaVersion: 'latest',
-      sourceType: 'module',
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: fileURLToPath(new URL('.', import.meta.url)),
+      },
       globals: {
         ...globals.node,
       },
     },
-    plugins: {
-      '@typescript-eslint': tsEslintPlugin,
-    },
     rules: {
-      ...tsEslintPlugin.configs.recommended.rules,
+      // Allows the expect(() => fn()).toThrow() idiom
+      '@typescript-eslint/no-confusing-void-expression': ['error', { ignoreArrowShorthand: true }],
     },
   },
   {
@@ -67,4 +68,4 @@ export default [
     },
   },
   eslintConfigPrettier,
-];
+);
