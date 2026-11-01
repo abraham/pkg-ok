@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { checkFields } from './fields.js';
+import { isObject, type Pkg } from './pkg.js';
 import { normalizeScripts } from './scripts.js';
 
 export interface Options {
@@ -11,7 +12,11 @@ export interface Options {
 // Main function
 export function pkgOk(dir: string, { fields = [], bin = [] }: Options = {}) {
   const pkgPath = join(dir, 'package.json');
-  const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+  const json: unknown = JSON.parse(readFileSync(pkgPath, 'utf8'));
+  if (!isObject(json) || Array.isArray(json)) {
+    throw new Error(`${pkgPath} must contain a JSON object`);
+  }
+  const pkg = json as Pkg;
 
   // Check files exist in package.json fields and additional fields
   const errors = checkFields(pkg, dir, fields);

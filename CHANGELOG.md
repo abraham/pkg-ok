@@ -5,6 +5,7 @@
 - Require Node 22, 24, or 26
 - Write errors to stderr instead of stdout
 - Fix crash on nested `exports` conditions, `null` exports, and `false` browser values; skip subpath patterns
+- Report a clear error when `package.json` isn't a JSON object
 
 ## 4.0.0
 
