@@ -15,7 +15,7 @@
     "jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "format": "prettier --write .",
     "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc",
-    "lint": "prettier --check . && eslint . --ext .ts --ext .cjs --ext .mjs",
+    "lint": "prettier --check . && eslint .",
     "prepublishOnly": "npm test && node ./dist/bin"
   },
   "repository": {
@@ -46,6 +46,7 @@
   "homepage": "https://github.com/abraham/pkg-ok#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@jest/globals": "^30.5.2",
     "@types/node": "^22.0.0",
     "@typescript-eslint/eslint-plugin": "^8.58.2",
     "@typescript-eslint/parser": "^8.58.2",

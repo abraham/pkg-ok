@@ -1,6 +1,6 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import normalizeNewline from 'normalize-newline';
-import { join } from 'path';
+import { join } from 'node:path';
 import { isObject, Pkg } from './pkg.js';
 
 function normalize(dir: string, file: string) {

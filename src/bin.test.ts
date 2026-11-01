@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from '@jest/globals';
-import { execFile } from 'child_process';
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
+import { execFile } from 'node:child_process';
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 let directory = '';
 
