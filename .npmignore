@@ -1,5 +1,0 @@
-.*
-*.test.*
-src
-tsconfig.json
-jest.config.mjs
