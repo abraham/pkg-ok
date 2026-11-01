@@ -84,6 +84,8 @@ describe('pkg-ok', () => {
         },
       }),
       '/I/index.js': '',
+      '/J/package.json': 'null',
+      '/K/package.json': '[]',
     };
     for (const [file, content] of Object.entries(files)) {
       mkdirSync(dirname(join(directory, file)), { recursive: true });
@@ -133,6 +135,14 @@ describe('pkg-ok', () => {
 
   it('checks /H', () => {
     expect(() => pkgOk(join(directory, 'H'))).not.toThrow();
+  });
+
+  it('checks /J', () => {
+    expect(() => pkgOk(join(directory, 'J'))).toThrow(/package\.json must contain a JSON object/);
+  });
+
+  it('checks /K', () => {
+    expect(() => pkgOk(join(directory, 'K'))).toThrow(/package\.json must contain a JSON object/);
   });
 
   it('checks /I', () => {
