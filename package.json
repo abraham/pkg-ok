@@ -4,12 +4,17 @@
   "description": "Checks package.json main and bin paths",
   "exports": "./dist/index.js",
   "bin": "./dist/bin.js",
+  "files": [
+    "CHANGELOG.md",
+    "dist",
+    "!dist/**/*.test.*"
+  ],
   "type": "module",
   "scripts": {
     "test": "npm run build && npm run jest && node ./dist/bin",
     "jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "format": "prettier --write .",
-    "build": "rm -rf dist && tsc",
+    "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc",
     "lint": "prettier --check . && eslint . --ext .ts --ext .cjs --ext .mjs",
     "prepublishOnly": "npm test && node ./dist/bin"
   },
