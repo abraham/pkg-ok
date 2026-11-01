@@ -1,5 +1,7 @@
 name: Index
-on: push
+on:
+  - push
+  - pull_request
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -16,3 +18,11 @@ jobs:
       - run: npm install
       - run: npm test
       - run: npm run lint
+  index-required:
+    if: ${{ !cancelled() }}
+    needs: [test]
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1
