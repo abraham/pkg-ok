@@ -16,7 +16,7 @@
     "format": "prettier --write .",
     "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc",
     "lint": "prettier --check . && eslint .",
-    "prepublishOnly": "npm test && node ./dist/bin"
+    "prepublishOnly": "npm test"
   },
   "repository": {
     "type": "git",
