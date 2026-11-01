@@ -41,7 +41,6 @@
   "homepage": "https://github.com/abraham/pkg-ok#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/mock-fs": "^4.0.0",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^8.58.2",
     "@typescript-eslint/parser": "^8.58.2",
@@ -51,7 +50,6 @@
     "eslint-plugin-n": "^18.2.1",
     "globals": "^17.6.0",
     "jest": "^30.3.0",
-    "mock-fs": "^5.0.0",
     "prettier": "3.9.10",
     "type-fest": "^5.6.0",
     "typescript": "^6.0.3"

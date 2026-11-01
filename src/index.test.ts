@@ -1,12 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
-import { readFileSync } from 'fs';
-import mock from 'mock-fs';
-import { join } from 'path';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { tmpdir } from 'os';
+import { dirname, join } from 'path';
 import { pkgOk } from './index.js';
+
+let directory = '';
 
 describe('pkg-ok', () => {
   beforeEach(() => {
-    mock({
+    directory = mkdtempSync(join(tmpdir(), 'pkg-ok-'));
+    const files: Record<string, string> = {
       '/A/package.json': JSON.stringify({
         main: 'unknown.js',
         bin: 'unknown.js',
@@ -52,43 +55,49 @@ describe('pkg-ok', () => {
         },
       }),
       '/G/dist/lib.cjs.js': './dist/lib.cjs.browser.js',
-    });
+    };
+    for (const [file, content] of Object.entries(files)) {
+      mkdirSync(dirname(join(directory, file)), { recursive: true });
+      writeFileSync(join(directory, file), content);
+    }
   });
 
-  afterEach(() => mock.restore());
+  afterEach(() => rmSync(directory, { recursive: true, force: true }));
 
   it('checks /A', () => {
-    expect(() => pkgOk(join('/A'))).toThrow(
+    expect(() => pkgOk(join(directory, 'A'))).toThrow(
       /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
     );
   });
 
   it('checks /B', () => {
-    expect(() => pkgOk(join('/B'))).toThrow(/bin\.X[\s\S]*bin\.Y/);
+    expect(() => pkgOk(join(directory, 'B'))).toThrow(/bin\.X[\s\S]*bin\.Y/);
   });
 
   it('checks /C', () => {
-    expect(() => pkgOk(join('/C'), { fields: ['foo'] })).toThrow(/foo/);
+    expect(() => pkgOk(join(directory, 'C'), { fields: ['foo'] })).toThrow(/foo/);
   });
 
   it('checks /D', () => {
-    expect(() => pkgOk(join('/D'), { fields: ['foo'] })).toThrow(/foo\.bar[\s\S]*foo\.baz/);
+    expect(() => pkgOk(join(directory, 'D'), { fields: ['foo'] })).toThrow(
+      /foo\.bar[\s\S]*foo\.baz/,
+    );
   });
 
   it('checks /E', () => {
-    pkgOk(join('/E'), { bin: ['another-script.js'] });
-    expect(readFileSync('/E/script.js', 'utf-8')).toEqual('foo\nbar');
-    expect(readFileSync('/E/another-script.js', 'utf-8')).toEqual('baz\nqux');
+    pkgOk(join(directory, 'E'), { bin: ['another-script.js'] });
+    expect(readFileSync(join(directory, 'E/script.js'), 'utf-8')).toEqual('foo\nbar');
+    expect(readFileSync(join(directory, 'E/another-script.js'), 'utf-8')).toEqual('baz\nqux');
   });
 
   it('checks /F', () => {
-    pkgOk(join('/F'));
-    expect(readFileSync('/F/dist/lib.cjs.browser.js', 'utf-8')).toEqual('cjs');
-    expect(readFileSync('/F/dist/lib.esm.browser.js', 'utf-8')).toEqual('esm');
+    pkgOk(join(directory, 'F'));
+    expect(readFileSync(join(directory, 'F/dist/lib.cjs.browser.js'), 'utf-8')).toEqual('cjs');
+    expect(readFileSync(join(directory, 'F/dist/lib.esm.browser.js'), 'utf-8')).toEqual('esm');
   });
 
   it('checks /G', () => {
-    expect(() => pkgOk(join('/G'))).toThrow(
+    expect(() => pkgOk(join(directory, 'G'))).toThrow(
       /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/,
     );
   });
