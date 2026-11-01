@@ -8,7 +8,7 @@ interface Field {
   relative: boolean;
 }
 
-const FIELDS: Readonly<Field[]> = [
+const FIELDS: readonly Field[] = [
   // https://docs.npmjs.com/cli/v8/configuring-npm/package-json#main
   {
     name: 'main',
@@ -51,7 +51,7 @@ const FIELDS: Readonly<Field[]> = [
   },
 ];
 
-const FIELD_NAMES: Readonly<string[]> = FIELDS.map((field) => field.name);
+const FIELD_NAMES: readonly string[] = FIELDS.map((field) => field.name);
 
 function doesNotExist(dir: string, file: string) {
   return !existsSync(join(dir, file));
@@ -63,7 +63,7 @@ function findField(name: string) {
 
 function mustBeRelative(name: string, file: string): boolean {
   const field = findField(name);
-  if (!field || !field.relative) {
+  if (!field?.relative) {
     return false;
   }
 

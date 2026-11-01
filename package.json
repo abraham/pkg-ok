@@ -48,8 +48,6 @@
     "@eslint/js": "^10.0.1",
     "@jest/globals": "^30.5.2",
     "@types/node": "^22.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.58.2",
-    "@typescript-eslint/parser": "^8.58.2",
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^29.15.2",
@@ -58,7 +56,8 @@
     "jest": "^30.3.0",
     "prettier": "3.9.10",
     "type-fest": "^5.6.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1"
   },
   "dependencies": {
     "chalk": "^6.0.0",
