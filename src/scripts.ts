@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import normalizeNewline from 'normalize-newline';
 import { join } from 'node:path';
-import { isObject, type Pkg } from './pkg.js';
+import { isObject, type Pkg } from './pkg.ts';
 
 function normalize(dir: string, file: string) {
   const filename = join(dir, file);

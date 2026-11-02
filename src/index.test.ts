@@ -1,8 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
+import assert from 'node:assert/strict';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { pkgOk } from './index.js';
+import { afterEach, beforeEach, describe, it } from 'node:test';
+import { pkgOk } from './index.ts';
 
 let directory = '';
 
@@ -96,58 +97,61 @@ describe('pkg-ok', () => {
   afterEach(() => rmSync(directory, { recursive: true, force: true }));
 
   it('checks /A', () => {
-    expect(() => pkgOk(join(directory, 'A'))).toThrow(
+    assert.throws(
+      () => pkgOk(join(directory, 'A')),
       /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
     );
   });
 
   it('checks /B', () => {
-    expect(() => pkgOk(join(directory, 'B'))).toThrow(/bin\.X[\s\S]*bin\.Y/);
+    assert.throws(() => pkgOk(join(directory, 'B')), /bin\.X[\s\S]*bin\.Y/);
   });
 
   it('checks /C', () => {
-    expect(() => pkgOk(join(directory, 'C'), { fields: ['foo'] })).toThrow(/foo/);
+    assert.throws(() => pkgOk(join(directory, 'C'), { fields: ['foo'] }), /foo/);
   });
 
   it('checks /D', () => {
-    expect(() => pkgOk(join(directory, 'D'), { fields: ['foo'] })).toThrow(
+    assert.throws(
+      () => pkgOk(join(directory, 'D'), { fields: ['foo'] }),
       /foo\.bar[\s\S]*foo\.baz/,
     );
   });
 
   it('checks /E', () => {
     pkgOk(join(directory, 'E'), { bin: ['another-script.js'] });
-    expect(readFileSync(join(directory, 'E/script.js'), 'utf-8')).toEqual('foo\nbar');
-    expect(readFileSync(join(directory, 'E/another-script.js'), 'utf-8')).toEqual('baz\nqux');
+    assert.equal(readFileSync(join(directory, 'E/script.js'), 'utf-8'), 'foo\nbar');
+    assert.equal(readFileSync(join(directory, 'E/another-script.js'), 'utf-8'), 'baz\nqux');
   });
 
   it('checks /F', () => {
     pkgOk(join(directory, 'F'));
-    expect(readFileSync(join(directory, 'F/dist/lib.cjs.browser.js'), 'utf-8')).toEqual('cjs');
-    expect(readFileSync(join(directory, 'F/dist/lib.esm.browser.js'), 'utf-8')).toEqual('esm');
+    assert.equal(readFileSync(join(directory, 'F/dist/lib.cjs.browser.js'), 'utf-8'), 'cjs');
+    assert.equal(readFileSync(join(directory, 'F/dist/lib.esm.browser.js'), 'utf-8'), 'esm');
   });
 
   it('checks /G', () => {
-    expect(() => pkgOk(join(directory, 'G'))).toThrow(
+    assert.throws(
+      () => pkgOk(join(directory, 'G')),
       /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/,
     );
   });
 
   it('checks /H', () => {
-    expect(() => pkgOk(join(directory, 'H'))).not.toThrow();
+    assert.doesNotThrow(() => pkgOk(join(directory, 'H')));
   });
 
   it('checks /J', () => {
-    expect(() => pkgOk(join(directory, 'J'))).toThrow(/package\.json must contain a JSON object/);
+    assert.throws(() => pkgOk(join(directory, 'J')), /package\.json must contain a JSON object/);
   });
 
   it('checks /K', () => {
-    expect(() => pkgOk(join(directory, 'K'))).toThrow(/package\.json must contain a JSON object/);
+    assert.throws(() => pkgOk(join(directory, 'K')), /package\.json must contain a JSON object/);
   });
 
   it('checks /I', () => {
-    expect(() => pkgOk(join(directory, 'I'))).toThrow(
-      /^exports\.\.\.node\.import path[^\n]*\nexports\.\.\.default\.1 path[^\n]*$/,
-    );
+    assert.throws(() => pkgOk(join(directory, 'I')), {
+      message: /^exports\.\.\.node\.import path[^\n]*\nexports\.\.\.default\.1 path[^\n]*$/,
+    });
   });
 });

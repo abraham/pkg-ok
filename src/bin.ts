@@ -2,7 +2,7 @@
 
 import chalk from 'chalk';
 import meow from 'meow';
-import { pkgOk } from './index.js';
+import { pkgOk } from './index.ts';
 
 const cli = meow(
   `
