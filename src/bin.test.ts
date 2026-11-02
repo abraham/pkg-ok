@@ -4,15 +4,25 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { before, describe, it } from 'node:test';
+import { fileURLToPath } from 'node:url';
+
+const BIN = fileURLToPath(new URL('../dist/bin.js', import.meta.url));
 
 let directory = '';
 
-function run(...args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
+function runIn(
+  cwd: string,
+  ...args: string[]
+): Promise<{ code: number; stdout: string; stderr: string }> {
   return new Promise((resolve) => {
-    execFile('node', ['dist/bin.js', ...args], (error, stdout, stderr) => {
+    execFile('node', [BIN, ...args], { cwd }, (error, stdout, stderr) => {
       resolve({ code: typeof error?.code === 'number' ? error.code : 0, stdout, stderr });
     });
   });
+}
+
+function run(...args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
+  return runIn(process.cwd(), ...args);
 }
 
 describe('pkg-ok', () => {
@@ -93,6 +103,12 @@ describe('pkg-ok', () => {
       }),
     );
     writeFileSync(join(directory, 'G/dist/lib.cjs.js'), './dist/lib.cjs.browser.js');
+    for (const name of ['M/packages/x', 'M/packages/y', 'M/node_modules/z']) {
+      mkdirSync(join(directory, name), { recursive: true });
+    }
+    writeFileSync(join(directory, 'M/packages/x/package.json'), '{}');
+    writeFileSync(join(directory, 'M/packages/y/package.json'), '{}');
+    writeFileSync(join(directory, 'M/node_modules/z/package.json'), '{"main": "missing.js"}');
   });
 
   it('checks /A', async () => {
@@ -142,5 +158,33 @@ describe('pkg-ok', () => {
     const { code, stderr } = await run(join(directory, 'G'), '--bin', 'another-script.js');
     assert.equal(code, 1);
     assert.match(stderr, /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/);
+  });
+
+  it('checks a package.json path', async () => {
+    const { code, stdout } = await run(join(directory, 'E/package.json'));
+    assert.equal(code, 0);
+    assert.match(stdout, /^Package ok$/m);
+  });
+
+  it('checks several packages and reports each one', async () => {
+    const { code, stdout, stderr } = await runIn(directory, 'A', 'E');
+    assert.equal(code, 1);
+    assert.match(stderr, /^A: pkg-ok error$/m);
+    assert.match(stdout, /^E: Package ok$/m);
+  });
+
+  it('expands globs and skips node_modules', async () => {
+    const { code, stdout, stderr } = await runIn(join(directory, 'M'), '**/package.json');
+    assert.equal(code, 0);
+    assert.equal(stderr, '');
+    assert.match(stdout, /^packages[\\/]x: Package ok$/m);
+    assert.match(stdout, /^packages[\\/]y: Package ok$/m);
+    assert.doesNotMatch(stdout, /node_modules/);
+  });
+
+  it('fails when a glob matches no packages', async () => {
+    const { code, stderr } = await runIn(directory, 'missing/*');
+    assert.equal(code, 1);
+    assert.match(stderr, /missing\/\* matched no packages/);
   });
 });
