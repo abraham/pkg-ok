@@ -40,6 +40,15 @@ Check the `package.json` in a specific directory.
 
 ```sh
 pkg-ok some/directory
+pkg-ok some/directory/package.json
+```
+
+Check several packages, such as in a monorepo. Quote globs so `pkg-ok` expands them; `node_modules` is skipped and `.gitignore` is not read.
+
+```sh
+pkg-ok . packages/a packages/b
+pkg-ok 'packages/*'
+pkg-ok '**/package.json'
 ```
 
 Check additional `package.json` fields or bin files.
