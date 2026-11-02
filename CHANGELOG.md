@@ -4,6 +4,7 @@
 
 - Require Node 22.17+, 24, or 26
 - Check several packages at once: pass multiple paths, `package.json` files, or quoted globs; `node_modules` is skipped
+- Check that field paths will be published, using `npm pack --dry-run`; turn off with `--no-published` or `published: false`
 - Write errors to stderr instead of stdout
 - Fix crash on nested `exports` conditions, `null` exports, and `false` browser values; skip subpath patterns
 - Report a clear error when `package.json` isn't a JSON object

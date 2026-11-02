@@ -15,8 +15,11 @@ const cli = meow(
   Defaults to the current directory. node_modules is skipped.
 
   Options
-    --field, -f  additional field to check
-    --bin, -b    additional bin file to check
+    --field, -f       additional field to check
+    --bin, -b         additional bin file to check
+    --no-published    skip checking that paths are in the files npm will publish
+
+  Private packages and packages without a name or version skip the published check.
 
   Examples
     $ pkg-ok
@@ -36,6 +39,10 @@ const cli = meow(
         shortFlag: 'b',
         type: 'string',
         isMultiple: true,
+      },
+      published: {
+        type: 'boolean',
+        default: true,
       },
     },
   },
@@ -60,7 +67,11 @@ try {
   for (const directory of directories) {
     const prefix = directories.length > 1 ? `${relative(process.cwd(), directory) || '.'}: ` : '';
     try {
-      pkgOk(directory, { fields: cli.flags.field, bin: cli.flags.bin });
+      pkgOk(directory, {
+        fields: cli.flags.field,
+        bin: cli.flags.bin,
+        published: cli.flags.published,
+      });
       console.log(chalk.green(`${prefix}Package ok`));
     } catch (error) {
       fail(prefix, error);

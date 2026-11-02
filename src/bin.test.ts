@@ -109,6 +109,12 @@ describe('pkg-ok', () => {
     writeFileSync(join(directory, 'M/packages/x/package.json'), '{}');
     writeFileSync(join(directory, 'M/packages/y/package.json'), '{}');
     writeFileSync(join(directory, 'M/node_modules/z/package.json'), '{"main": "missing.js"}');
+    mkdirSync(join(directory, 'P/lib'), { recursive: true });
+    writeFileSync(
+      join(directory, 'P/package.json'),
+      JSON.stringify({ name: 'p', version: '1.0.0', files: ['dist'], main: './lib/index.js' }),
+    );
+    writeFileSync(join(directory, 'P/lib/index.js'), '');
   });
 
   it('checks /A', async () => {
@@ -186,5 +192,17 @@ describe('pkg-ok', () => {
     const { code, stderr } = await runIn(directory, 'missing/*');
     assert.equal(code, 1);
     assert.match(stderr, /missing\/\* matched no packages/);
+  });
+
+  it('reports paths that are not published', async () => {
+    const { code, stderr } = await run(join(directory, 'P'));
+    assert.equal(code, 1);
+    assert.match(stderr, /main path exists but isn't published/);
+  });
+
+  it('skips the published check with --no-published', async () => {
+    const { code, stdout } = await run(join(directory, 'P'), '--no-published');
+    assert.equal(code, 0);
+    assert.match(stdout, /^Package ok$/m);
   });
 });
