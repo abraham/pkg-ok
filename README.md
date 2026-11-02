@@ -67,9 +67,9 @@ pkg-ok --no-published
 ## API
 
 ```js
-const pkgDirectory = __dirname;
+import { pkgOk } from 'pkg-ok';
 
-pkgOk(pkgDirectory, {
+pkgOk(process.cwd(), {
   fields: ['someAdditonalField'],
   bin: ['someAdditionalScript.sh'],
 });
