@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { doesNotExistError, mustBeRelativeError } from './errors.ts';
+import { doesNotExistError, mustBeRelativeError, notPublishedError } from './errors.ts';
+import { isPacked } from './packed.ts';
 import { isObject, type Pkg } from './pkg.ts';
 
 interface Field {
@@ -70,10 +71,16 @@ function mustBeRelative(name: string, file: string): boolean {
   return !file.startsWith('./');
 }
 
-function checkValue(field: string, path: string, dir: string, value: unknown): string[] {
+function checkValue(
+  field: string,
+  path: string,
+  dir: string,
+  value: unknown,
+  packed: ReadonlySet<string> | undefined,
+): string[] {
   if (isObject(value)) {
     return Object.entries(value).flatMap(([key, nested]) =>
-      checkValue(field, `${path}.${key}`, dir, nested),
+      checkValue(field, `${path}.${key}`, dir, nested, packed),
     );
   }
 
@@ -85,6 +92,8 @@ function checkValue(field: string, path: string, dir: string, value: unknown): s
   const errors: string[] = [];
   if (doesNotExist(dir, value)) {
     errors.push(doesNotExistError(path));
+  } else if (packed && !isPacked(packed, value)) {
+    errors.push(notPublishedError(path));
   }
 
   if (mustBeRelative(field, value)) {
@@ -94,13 +103,18 @@ function checkValue(field: string, path: string, dir: string, value: unknown): s
   return errors;
 }
 
-function checkField(pkg: Pkg, dir: string, field: string) {
-  return checkValue(field, field, dir, pkg[field]);
+function checkField(pkg: Pkg, dir: string, field: string, packed: ReadonlySet<string> | undefined) {
+  return checkValue(field, field, dir, pkg[field], packed);
 }
 
-export function checkFields(pkg: Pkg, dir: string, otherFields: string[]): string[] {
+// Pass the files npm will publish to also check that each path is published
+export function checkFields(
+  pkg: Pkg,
+  dir: string,
+  otherFields: string[],
+  packed?: ReadonlySet<string>,
+): string[] {
   const fields = [...FIELD_NAMES, ...otherFields];
 
-  // Check fields and add errors to the errors array
-  return fields.flatMap((field) => checkField(pkg, dir, field));
+  return fields.flatMap((field) => checkField(pkg, dir, field, packed));
 }

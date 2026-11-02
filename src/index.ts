@@ -1,16 +1,22 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { checkFields } from './fields.ts';
+import { isPublishable, packedFiles } from './packed.ts';
 import { isObject, type Pkg } from './pkg.ts';
 import { normalizeScripts } from './scripts.ts';
 
 export interface Options {
   bin?: string[] | undefined;
   fields?: string[] | undefined;
+  // Also check that paths are in the files npm will publish; defaults to true
+  published?: boolean | undefined;
 }
 
 // Main function
-export function pkgOk(dir: string, { fields = [], bin = [] }: Options = {}): void {
+export function pkgOk(
+  dir: string,
+  { fields = [], bin = [], published = true }: Options = {},
+): void {
   const pkgPath = join(dir, 'package.json');
   const json: unknown = JSON.parse(readFileSync(pkgPath, 'utf8'));
   if (!isObject(json) || Array.isArray(json)) {
@@ -19,7 +25,8 @@ export function pkgOk(dir: string, { fields = [], bin = [] }: Options = {}): voi
   const pkg = json as Pkg;
 
   // Check files exist in package.json fields and additional fields
-  const errors = checkFields(pkg, dir, fields);
+  const packed = published && isPublishable(pkg) ? packedFiles(dir) : undefined;
+  const errors = checkFields(pkg, dir, fields, packed);
 
   if (errors.length) {
     throw new Error(errors.join('\n'));

@@ -3,6 +3,7 @@
 > `pkg-ok` checks paths and scripts defined in `package.json` before you publish 👌
 
 - Ensures paths defined in `main`, `bin`, `module`, `types`, `typings`, `es2015`, `browser`, and `exports` exist
+- Ensures those paths will be published, so they aren't left out by `files` or `.npmignore`
 - Ensures paths defined in `main`, `bin`, and `browser` are relative
 - Ensures `bin` scripts use cross-platform line endings
 
@@ -55,6 +56,12 @@ Check additional `package.json` fields or bin files.
 
 ```sh
 pkg-ok --field someField --bin script.sh
+```
+
+The published check runs `npm pack --dry-run --ignore-scripts`, so npm must be installed. It's skipped for `private` packages and packages without a `name` or `version`. Turn it off with `--no-published`.
+
+```sh
+pkg-ok --no-published
 ```
 
 ## API
