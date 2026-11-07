@@ -1,29 +1,16 @@
 import { lstatSync, realpathSync } from 'fs';
 import { join } from 'path';
+import { linkedDependencyError } from './errors.js';
+import { isObject, Pkg } from './pkg.js';
 
-type Package = {
-  dependencies?: unknown;
-  optionalDependencies?: unknown;
-  peerDependencies?: unknown;
-};
-
-const dependencyFields: readonly (keyof Package)[] = [
+const dependencyFields: readonly (keyof Pkg)[] = [
   'dependencies',
   'optionalDependencies',
   'peerDependencies',
 ];
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
 function isMissingPath(error: unknown): boolean {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'code' in error &&
-    error.code === 'ENOENT'
-  );
+  return typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT';
 }
 
 function isNodeModulesPath(path: string): boolean {
@@ -80,11 +67,11 @@ function dependencyEntryPaths(dir: string, name: string): string[] {
   return [join(nodeModules, name)];
 }
 
-export function checkLinkedDependencies(pkg: Package, dir: string): string[] {
+export function checkDependencies(pkg: Pkg, dir: string): string[] {
   const names = new Set<string>();
   for (const field of dependencyFields) {
     const dependencies = pkg[field];
-    if (isRecord(dependencies)) {
+    if (isObject(dependencies) && !Array.isArray(dependencies)) {
       Object.keys(dependencies).forEach((name) => names.add(name));
     }
   }
@@ -93,7 +80,7 @@ export function checkLinkedDependencies(pkg: Package, dir: string): string[] {
   for (const name of names) {
     const paths = dependencyEntryPaths(dir, name);
     if (paths.some(isLocalSymlink)) {
-      errors.push(`Dependency "${name}" is linked to a local package`);
+      errors.push(linkedDependencyError(name));
     }
   }
   return errors;

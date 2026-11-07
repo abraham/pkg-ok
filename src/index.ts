@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { checkFields } from './fields.js';
-import { checkLinkedDependencies } from './linked-dependencies.js';
+import { checkDependencies } from './dependencies.js';
 import { normalizeScripts } from './scripts.js';
 
 export interface Options {
@@ -15,10 +15,7 @@ export function pkgOk(dir: string, { fields = [], bin = [] }: Options = {}) {
   const pkg = JSON.parse(readFileSync(pkgPath).toString());
 
   // Check files exist in package.json fields and additional fields
-  const errors = [
-    ...checkFields(pkg, dir, fields),
-    ...checkLinkedDependencies(pkg, dir),
-  ];
+  const errors = [...checkFields(pkg, dir, fields), ...checkDependencies(pkg, dir)];
 
   if (errors.length) {
     throw new Error(errors.join('\n'));

@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from '@jest/globals';
 import mock from 'mock-fs';
-import { checkLinkedDependencies } from './linked-dependencies.js';
+import { checkDependencies } from './dependencies.js';
 
-describe('checkLinkedDependencies', () => {
+describe('checkDependencies', () => {
   afterEach(() => mock.restore());
 
   it('reports local direct dependency links but ignores installed package-store links', () => {
@@ -27,7 +27,7 @@ describe('checkLinkedDependencies', () => {
     });
 
     expect(
-      checkLinkedDependencies(
+      checkDependencies(
         {
           dependencies: {
             'local-dep': '*',
@@ -53,6 +53,6 @@ describe('checkLinkedDependencies', () => {
 
   it('ignores dependencies that are not installed', () => {
     mock({ '/consumer/package.json': '{}' });
-    expect(checkLinkedDependencies({ dependencies: { missing: '*' } }, '/consumer')).toEqual([]);
+    expect(checkDependencies({ dependencies: { missing: '*' } }, '/consumer')).toEqual([]);
   });
 });
