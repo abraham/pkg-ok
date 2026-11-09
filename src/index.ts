@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { checkDependencies } from './dependencies.ts';
 import { checkFields } from './fields.ts';
 import { isPublishable, packedFiles } from './packed.ts';
 import { isObject, type Pkg } from './pkg.ts';
@@ -10,12 +11,14 @@ export interface Options {
   fields?: string[] | undefined;
   // Also check that paths are in the files npm will publish; defaults to true
   published?: boolean | undefined;
+  // Check that direct dependencies aren't linked to local folders; defaults to true
+  linked?: boolean | undefined;
 }
 
 // Main function
 export function pkgOk(
   dir: string,
-  { fields = [], bin = [], published = true }: Options = {},
+  { fields = [], bin = [], published = true, linked = true }: Options = {},
 ): void {
   const pkgPath = join(dir, 'package.json');
   const json: unknown = JSON.parse(readFileSync(pkgPath, 'utf8'));
@@ -27,6 +30,9 @@ export function pkgOk(
   // Check files exist in package.json fields and additional fields
   const packed = published && isPublishable(pkg) ? packedFiles(dir) : undefined;
   const errors = checkFields(pkg, dir, fields, packed);
+  if (linked) {
+    errors.push(...checkDependencies(pkg, dir));
+  }
 
   if (errors.length) {
     throw new Error(errors.join('\n'));

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
@@ -87,11 +87,23 @@ describe('pkg-ok', () => {
       '/I/index.js': '',
       '/J/package.json': 'null',
       '/K/package.json': '[]',
+      '/L/package.json': JSON.stringify({
+        dependencies: { 'local-dep': '^1.0.0' },
+        bin: './script.js',
+      }),
+      '/L/script.js': 'foo\r\nbar',
+      '/local-dep/package.json': '{}',
     };
     for (const [file, content] of Object.entries(files)) {
       mkdirSync(dirname(join(directory, file)), { recursive: true });
       writeFileSync(join(directory, file), content);
     }
+    mkdirSync(join(directory, 'L/node_modules'));
+    symlinkSync(
+      join(directory, 'local-dep'),
+      join(directory, 'L/node_modules/local-dep'),
+      'junction',
+    );
   });
 
   afterEach(() => rmSync(directory, { recursive: true, force: true }));
@@ -153,5 +165,17 @@ describe('pkg-ok', () => {
     assert.throws(() => pkgOk(join(directory, 'I')), {
       message: /^exports\.\.\.node\.import path[^\n]*\nexports\.\.\.default\.1 path[^\n]*$/,
     });
+  });
+
+  it('checks /L', () => {
+    assert.throws(() => pkgOk(join(directory, 'L')), {
+      message: `Dependency "local-dep" is linked to ${join('..', 'local-dep')}; install it from the registry before publishing`,
+    });
+    assert.equal(readFileSync(join(directory, 'L/script.js'), 'utf-8'), 'foo\r\nbar');
+  });
+
+  it('skips the linked check with linked: false', () => {
+    pkgOk(join(directory, 'L'), { linked: false });
+    assert.equal(readFileSync(join(directory, 'L/script.js'), 'utf-8'), 'foo\nbar');
   });
 });

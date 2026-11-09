@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+
+- Detect direct dependencies linked to local folders; packages that passed before can now fail. Turn off with `--no-linked` or `linked: false`
+
 ## 5.0.0
 
 ### Breaking
