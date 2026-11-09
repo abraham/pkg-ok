@@ -65,11 +65,11 @@ describe('checkDependencies', () => {
         join(directory, 'consumer'),
       ),
       [
-        'Dependency "local-dep" is linked to a local package',
-        'Dependency "broken-dep" is linked to a local package',
-        'Dependency "@scope/scoped-dep" is linked to a local package',
-        'Dependency "optional-dep" is linked to a local package',
-        'Dependency "peer-dep" is linked to a local package',
+        `Dependency "local-dep" is linked to ${join('..', 'workspace', 'local-dep')}; install it from the registry before publishing`,
+        `Dependency "broken-dep" is linked to ${join(directory, 'workspace', 'missing-dep')} (missing); install it from the registry before publishing`,
+        `Dependency "@scope/scoped-dep" is linked to ${join('..', 'workspace', 'scoped-dep')}; install it from the registry before publishing`,
+        `Dependency "optional-dep" is linked to ${join('..', 'workspace', 'optional-dep')}; install it from the registry before publishing`,
+        `Dependency "peer-dep" is linked to ${join('..', 'workspace', 'peer-dep')}; install it from the registry before publishing`,
       ],
     );
   });

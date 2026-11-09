@@ -4,8 +4,7 @@
 
 - Ensures paths defined in `main`, `bin`, `module`, `types`, `typings`, `es2015`, `browser`, and `exports` exist
 - Ensures those paths will be published, so they aren't left out by `files` or `.npmignore`
-- Checks direct `dependencies`, `optionalDependencies`, and `peerDependencies` for local project links
-  (package-manager store links are ignored)
+- Ensures direct dependencies aren't linked to local folders (`npm link`)
 - Ensures paths defined in `main`, `bin`, and `browser` are relative
 - Ensures `bin` scripts use cross-platform line endings
 
@@ -64,6 +63,12 @@ The published check runs `npm pack --dry-run --ignore-scripts`, so npm must be i
 
 ```sh
 pkg-ok --no-published
+```
+
+The linked check fails when a package in `dependencies`, `optionalDependencies`, or `peerDependencies` is a symlink to a folder outside `node_modules`, such as one made by `npm link`. Links into package-manager stores, like pnpm's, are ignored. Turn it off with `--no-linked`.
+
+```sh
+pkg-ok --no-linked
 ```
 
 ## API

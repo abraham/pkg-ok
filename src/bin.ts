@@ -18,6 +18,7 @@ const cli = meow(
     --field, -f       additional field to check
     --bin, -b         additional bin file to check
     --no-published    skip checking that paths are in the files npm will publish
+    --no-linked       skip checking that dependencies aren't linked to local folders
 
   Private packages and packages without a name or version skip the published check.
 
@@ -41,6 +42,10 @@ const cli = meow(
         isMultiple: true,
       },
       published: {
+        type: 'boolean',
+        default: true,
+      },
+      linked: {
         type: 'boolean',
         default: true,
       },
@@ -71,6 +76,7 @@ try {
         fields: cli.flags.field,
         bin: cli.flags.bin,
         published: cli.flags.published,
+        linked: cli.flags.linked,
       });
       console.log(chalk.green(`${prefix}Package ok`));
     } catch (error) {

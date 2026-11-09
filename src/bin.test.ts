@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { before, describe, it } from 'node:test';
@@ -115,6 +115,14 @@ describe('pkg-ok', () => {
       JSON.stringify({ name: 'p', version: '1.0.0', files: ['dist'], main: './lib/index.js' }),
     );
     writeFileSync(join(directory, 'P/lib/index.js'), '');
+    mkdirSync(join(directory, 'Q/node_modules'), { recursive: true });
+    mkdirSync(join(directory, 'local-dep'));
+    writeFileSync(join(directory, 'Q/package.json'), '{"dependencies": {"local-dep": "*"}}');
+    symlinkSync(
+      join(directory, 'local-dep'),
+      join(directory, 'Q/node_modules/local-dep'),
+      'junction',
+    );
   });
 
   it('checks /A', async () => {
@@ -202,6 +210,18 @@ describe('pkg-ok', () => {
 
   it('skips the published check with --no-published', async () => {
     const { code, stdout } = await run(join(directory, 'P'), '--no-published');
+    assert.equal(code, 0);
+    assert.match(stdout, /^Package ok$/m);
+  });
+
+  it('reports locally linked dependencies', async () => {
+    const { code, stderr } = await run(join(directory, 'Q'));
+    assert.equal(code, 1);
+    assert.match(stderr, /Dependency "local-dep" is linked to \.\.[\\/]local-dep/);
+  });
+
+  it('skips the linked check with --no-linked', async () => {
+    const { code, stdout } = await run(join(directory, 'Q'), '--no-linked');
     assert.equal(code, 0);
     assert.match(stdout, /^Package ok$/m);
   });

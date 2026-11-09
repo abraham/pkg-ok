@@ -1,5 +1,5 @@
-import { lstatSync, realpathSync } from 'node:fs';
-import { join } from 'node:path';
+import { lstatSync, readlinkSync, realpathSync } from 'node:fs';
+import { join, relative } from 'node:path';
 import { linkedDependencyError } from './errors.ts';
 import { isObject, type Pkg } from './pkg.ts';
 
@@ -17,33 +17,33 @@ function isNodeModulesPath(path: string): boolean {
   return path.split(/[\\/]+/).some((part) => part.toLowerCase() === 'node_modules');
 }
 
-function isLocalSymlink(path: string): boolean {
+// Returns where a local link points, or undefined for anything else
+function localLinkTarget(dir: string, path: string): string | undefined {
   let isSymlink: boolean;
   try {
     isSymlink = lstatSync(path).isSymbolicLink();
   } catch (error) {
     if (isMissingPath(error)) {
-      return false;
+      return undefined;
     }
     throw error;
   }
 
   if (!isSymlink) {
-    return false;
+    return undefined;
   }
 
+  let target: string;
   try {
-    // Package managers such as pnpm place installed packages in node_modules
-    // stores and expose them through symlinks. A local project link resolves
-    // outside those stores.
-    return !isNodeModulesPath(realpathSync(path));
+    target = realpathSync(path);
   } catch (error) {
-    // A broken dependency symlink is still a local link and should block publish.
     if (isMissingPath(error)) {
-      return true;
+      return `${readlinkSync(path)} (missing)`;
     }
     throw error;
   }
+  // Package-manager stores (like pnpm's) live inside node_modules
+  return isNodeModulesPath(target) ? undefined : relative(realpathSync(dir), target);
 }
 
 function dependencyEntryPaths(dir: string, name: string): string[] {
@@ -78,9 +78,12 @@ export function checkDependencies(pkg: Pkg, dir: string): string[] {
 
   const errors: string[] = [];
   for (const name of names) {
-    const paths = dependencyEntryPaths(dir, name);
-    if (paths.some(isLocalSymlink)) {
-      errors.push(linkedDependencyError(name));
+    for (const path of dependencyEntryPaths(dir, name)) {
+      const target = localLinkTarget(dir, path);
+      if (target !== undefined) {
+        errors.push(linkedDependencyError(name, target));
+        break;
+      }
     }
   }
   return errors;

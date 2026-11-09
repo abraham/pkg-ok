@@ -167,11 +167,15 @@ describe('pkg-ok', () => {
     });
   });
 
-  it('rejects locally linked direct dependencies before normalizing scripts', () => {
-    assert.throws(
-      () => pkgOk(join(directory, 'L')),
-      /Dependency "local-dep" is linked to a local package/,
-    );
+  it('checks /L', () => {
+    assert.throws(() => pkgOk(join(directory, 'L')), {
+      message: `Dependency "local-dep" is linked to ${join('..', 'local-dep')}; install it from the registry before publishing`,
+    });
     assert.equal(readFileSync(join(directory, 'L/script.js'), 'utf-8'), 'foo\r\nbar');
+  });
+
+  it('skips the linked check with linked: false', () => {
+    pkgOk(join(directory, 'L'), { linked: false });
+    assert.equal(readFileSync(join(directory, 'L/script.js'), 'utf-8'), 'foo\nbar');
   });
 });
