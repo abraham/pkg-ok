@@ -1,14 +1,15 @@
-import { existsSync } from 'fs';
-import { join } from 'path';
-import { doesNotExistError, mustBeRelativeError } from './errors.js';
-import { isObject, Pkg } from './pkg.js';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { doesNotExistError, mustBeRelativeError, notPublishedError } from './errors.ts';
+import { isPacked } from './packed.ts';
+import { isObject, type Pkg } from './pkg.ts';
 
 interface Field {
   name: string;
   relative: boolean;
 }
 
-const FIELDS: Readonly<Field[]> = [
+const FIELDS: readonly Field[] = [
   // https://docs.npmjs.com/cli/v8/configuring-npm/package-json#main
   {
     name: 'main',
@@ -51,7 +52,7 @@ const FIELDS: Readonly<Field[]> = [
   },
 ];
 
-const FIELD_NAMES: Readonly<string[]> = FIELDS.map((field) => field.name);
+const FIELD_NAMES: readonly string[] = FIELDS.map((field) => field.name);
 
 function doesNotExist(dir: string, file: string) {
   return !existsSync(join(dir, file));
@@ -63,45 +64,57 @@ function findField(name: string) {
 
 function mustBeRelative(name: string, file: string): boolean {
   const field = findField(name);
-  if (!field || !field.relative) {
+  if (!field?.relative) {
     return false;
   }
 
   return !file.startsWith('./');
 }
 
-function checkField(pkg: Pkg, dir: string, field: string) {
+function checkValue(
+  field: string,
+  path: string,
+  dir: string,
+  value: unknown,
+  packed: ReadonlySet<string> | undefined,
+): string[] {
+  if (isObject(value)) {
+    return Object.entries(value).flatMap(([key, nested]) =>
+      checkValue(field, `${path}.${key}`, dir, nested, packed),
+    );
+  }
+
+  // Subpath patterns like ./features/*.js match many files, not one
+  if (typeof value !== 'string' || !value || value.includes('*')) {
+    return [];
+  }
+
   const errors: string[] = [];
+  if (doesNotExist(dir, value)) {
+    errors.push(doesNotExistError(path));
+  } else if (packed && !isPacked(packed, value)) {
+    errors.push(notPublishedError(path));
+  }
 
-  const value = pkg[field];
-  if (value) {
-    if (isObject(value)) {
-      Object.keys(value).forEach((key) => {
-        if (doesNotExist(dir, value[key])) {
-          errors.push(doesNotExistError(`${field}.${key}`));
-        }
-
-        if (mustBeRelative(field, value[key])) {
-          errors.push(mustBeRelativeError(`${field}.${key}`));
-        }
-      });
-    } else if (typeof value === 'string') {
-      if (doesNotExist(dir, value)) {
-        errors.push(doesNotExistError(field));
-      }
-
-      if (mustBeRelative(field, value)) {
-        errors.push(mustBeRelativeError(field));
-      }
-    }
+  if (mustBeRelative(field, value)) {
+    errors.push(mustBeRelativeError(path));
   }
 
   return errors;
 }
 
-export function checkFields(pkg: Pkg, dir: string, otherFields: string[]) {
+function checkField(pkg: Pkg, dir: string, field: string, packed: ReadonlySet<string> | undefined) {
+  return checkValue(field, field, dir, pkg[field], packed);
+}
+
+// Pass the files npm will publish to also check that each path is published
+export function checkFields(
+  pkg: Pkg,
+  dir: string,
+  otherFields: string[],
+  packed?: ReadonlySet<string>,
+): string[] {
   const fields = [...FIELD_NAMES, ...otherFields];
 
-  // Check fields and add errors to the errors array
-  return fields.flatMap((field) => checkField(pkg, dir, field));
+  return fields.flatMap((field) => checkField(pkg, dir, field, packed));
 }

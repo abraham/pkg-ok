@@ -4,6 +4,30 @@
 
 - Detect direct dependencies linked to local project directories
 
+## 5.0.0
+
+### Breaking
+
+- Require Node 22.17+, 24, or 26
+- Check that field paths will be published, using `npm pack --dry-run`; packages that passed before can now fail, and npm must be installed. Turn off with `--no-published` or `published: false`
+- Write errors to stderr instead of stdout
+
+### Features
+
+- Check several packages at once: pass multiple paths, `package.json` files, or quoted globs; `node_modules` is skipped
+
+### Fixes
+
+- Fix crash on nested `exports` conditions, `null` exports, and `false` browser values
+- Skip `exports` subpath patterns (`./features/*.js`) instead of reporting them as missing paths
+- Report a clear error when `package.json` isn't a JSON object
+
+### Other
+
+- Publish declaration maps, and include TypeScript sources in source maps
+- Stop publishing `eslint.config.mjs`
+- Update `chalk` to 6 and `normalize-newline` to 5
+
 ## 4.0.0
 
 - Require Node 20, 22, or 24

@@ -2,19 +2,29 @@
 
 import chalk from 'chalk';
 import meow from 'meow';
-import { pkgOk } from './index.js';
+import { relative } from 'node:path';
+import { pkgOk } from './index.ts';
+import { resolveTargets } from './targets.ts';
 
 const cli = meow(
   `
   Usage
-    $ pkg-ok
+    $ pkg-ok [path ...]
+
+  Paths can be package directories, package.json files, or quoted globs.
+  Defaults to the current directory. node_modules is skipped.
 
   Options
-    --field, -f  additional field to check
-    --bin, -b    additional bin file to check
+    --field, -f       additional field to check
+    --bin, -b         additional bin file to check
+    --no-published    skip checking that paths are in the files npm will publish
+
+  Private packages and packages without a name or version skip the published check.
 
   Examples
     $ pkg-ok
+    $ pkg-ok packages/name-of-package/package.json
+    $ pkg-ok . 'packages/*'
     $ pkg-ok --field otherField --bin otherFile
 `,
   {
@@ -30,6 +40,10 @@ const cli = meow(
         type: 'string',
         isMultiple: true,
       },
+      published: {
+        type: 'boolean',
+        default: true,
+      },
     },
   },
 );
@@ -42,13 +56,27 @@ const errorMessage = (error: unknown) => {
   }
 };
 
-const directory = cli.input[0] || process.cwd();
+const fail = (prefix: string, error: unknown) => {
+  console.error(chalk.red(`${prefix}pkg-ok error`));
+  console.error(chalk.red(errorMessage(error)));
+  process.exitCode = 1;
+};
 
 try {
-  pkgOk(directory, { fields: cli.flags.field, bin: cli.flags.bin });
-  console.log(chalk.green('Package ok'));
+  const directories = resolveTargets(cli.input, process.cwd());
+  for (const directory of directories) {
+    const prefix = directories.length > 1 ? `${relative(process.cwd(), directory) || '.'}: ` : '';
+    try {
+      pkgOk(directory, {
+        fields: cli.flags.field,
+        bin: cli.flags.bin,
+        published: cli.flags.published,
+      });
+      console.log(chalk.green(`${prefix}Package ok`));
+    } catch (error) {
+      fail(prefix, error);
+    }
+  }
 } catch (error) {
-  console.log(chalk.red('pkg-ok error'));
-  console.log(chalk.red(errorMessage(error)));
-  process.exit(1);
+  fail('', error);
 }

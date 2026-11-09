@@ -1,12 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
-import { readFileSync } from 'fs';
-import mock from 'mock-fs';
-import { join } from 'path';
-import { pkgOk } from './index.js';
+import assert from 'node:assert/strict';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { afterEach, beforeEach, describe, it } from 'node:test';
+import { pkgOk } from './index.ts';
+
+let directory = '';
 
 describe('pkg-ok', () => {
   beforeEach(() => {
-    mock({
+    directory = mkdtempSync(join(tmpdir(), 'pkg-ok-'));
+    const files: Record<string, string> = {
       '/A/package.json': JSON.stringify({
         main: 'unknown.js',
         bin: 'unknown.js',
@@ -53,55 +57,121 @@ describe('pkg-ok', () => {
       }),
       '/G/dist/lib.cjs.js': './dist/lib.cjs.browser.js',
       '/H/package.json': JSON.stringify({
+        exports: {
+          '.': {
+            types: './index.d.ts',
+            import: './index.js',
+            require: './index.cjs',
+          },
+          './features/*.js': './features/*.js',
+          './internal/*': null,
+          './package.json': './package.json',
+        },
+        browser: {
+          fs: false,
+          './index.js': './browser.js',
+        },
+      }),
+      '/H/index.d.ts': '',
+      '/H/index.js': '',
+      '/H/index.cjs': '',
+      '/H/browser.js': '',
+      '/I/package.json': JSON.stringify({
+        exports: {
+          '.': {
+            node: { import: './missing.mjs' },
+            default: ['./index.js', './fallback.js'],
+          },
+        },
+      }),
+      '/I/index.js': '',
+      '/J/package.json': 'null',
+      '/K/package.json': '[]',
+      '/L/package.json': JSON.stringify({
         dependencies: { 'local-dep': '^1.0.0' },
         bin: './script.js',
       }),
-      '/H/node_modules/local-dep': mock.symlink({ path: '/local-dep' }),
-      '/H/script.js': 'foo\r\nbar',
+      '/L/script.js': 'foo\r\nbar',
       '/local-dep/package.json': '{}',
-    });
+    };
+    for (const [file, content] of Object.entries(files)) {
+      mkdirSync(dirname(join(directory, file)), { recursive: true });
+      writeFileSync(join(directory, file), content);
+    }
+    mkdirSync(join(directory, 'L/node_modules'));
+    symlinkSync(
+      join(directory, 'local-dep'),
+      join(directory, 'L/node_modules/local-dep'),
+      'junction',
+    );
   });
 
-  afterEach(() => mock.restore());
+  afterEach(() => rmSync(directory, { recursive: true, force: true }));
 
   it('checks /A', () => {
-    expect(() => pkgOk(join('/A'))).toThrow(
+    assert.throws(
+      () => pkgOk(join(directory, 'A')),
       /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
     );
   });
 
   it('checks /B', () => {
-    expect(() => pkgOk(join('/B'))).toThrow(/bin\.X[\s\S]*bin\.Y/);
+    assert.throws(() => pkgOk(join(directory, 'B')), /bin\.X[\s\S]*bin\.Y/);
   });
 
   it('checks /C', () => {
-    expect(() => pkgOk(join('/C'), { fields: ['foo'] })).toThrow(/foo/);
+    assert.throws(() => pkgOk(join(directory, 'C'), { fields: ['foo'] }), /foo/);
   });
 
   it('checks /D', () => {
-    expect(() => pkgOk(join('/D'), { fields: ['foo'] })).toThrow(/foo\.bar[\s\S]*foo\.baz/);
+    assert.throws(
+      () => pkgOk(join(directory, 'D'), { fields: ['foo'] }),
+      /foo\.bar[\s\S]*foo\.baz/,
+    );
   });
 
   it('checks /E', () => {
-    pkgOk(join('/E'), { bin: ['another-script.js'] });
-    expect(readFileSync('/E/script.js', 'utf-8')).toEqual('foo\nbar');
-    expect(readFileSync('/E/another-script.js', 'utf-8')).toEqual('baz\nqux');
+    pkgOk(join(directory, 'E'), { bin: ['another-script.js'] });
+    assert.equal(readFileSync(join(directory, 'E/script.js'), 'utf-8'), 'foo\nbar');
+    assert.equal(readFileSync(join(directory, 'E/another-script.js'), 'utf-8'), 'baz\nqux');
   });
 
   it('checks /F', () => {
-    pkgOk(join('/F'));
-    expect(readFileSync('/F/dist/lib.cjs.browser.js', 'utf-8')).toEqual('cjs');
-    expect(readFileSync('/F/dist/lib.esm.browser.js', 'utf-8')).toEqual('esm');
+    pkgOk(join(directory, 'F'));
+    assert.equal(readFileSync(join(directory, 'F/dist/lib.cjs.browser.js'), 'utf-8'), 'cjs');
+    assert.equal(readFileSync(join(directory, 'F/dist/lib.esm.browser.js'), 'utf-8'), 'esm');
   });
 
   it('checks /G', () => {
-    expect(() => pkgOk(join('/G'))).toThrow(
+    assert.throws(
+      () => pkgOk(join(directory, 'G')),
       /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/,
     );
   });
 
+  it('checks /H', () => {
+    assert.doesNotThrow(() => pkgOk(join(directory, 'H')));
+  });
+
+  it('checks /J', () => {
+    assert.throws(() => pkgOk(join(directory, 'J')), /package\.json must contain a JSON object/);
+  });
+
+  it('checks /K', () => {
+    assert.throws(() => pkgOk(join(directory, 'K')), /package\.json must contain a JSON object/);
+  });
+
+  it('checks /I', () => {
+    assert.throws(() => pkgOk(join(directory, 'I')), {
+      message: /^exports\.\.\.node\.import path[^\n]*\nexports\.\.\.default\.1 path[^\n]*$/,
+    });
+  });
+
   it('rejects locally linked direct dependencies before normalizing scripts', () => {
-    expect(() => pkgOk('/H')).toThrow(/Dependency "local-dep" is linked to a local package/);
-    expect(readFileSync('/H/script.js', 'utf-8')).toEqual('foo\r\nbar');
+    assert.throws(
+      () => pkgOk(join(directory, 'L')),
+      /Dependency "local-dep" is linked to a local package/,
+    );
+    assert.equal(readFileSync(join(directory, 'L/script.js'), 'utf-8'), 'foo\r\nbar');
   });
 });

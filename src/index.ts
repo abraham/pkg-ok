@@ -1,21 +1,33 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { checkFields } from './fields.js';
-import { checkDependencies } from './dependencies.js';
-import { normalizeScripts } from './scripts.js';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { checkDependencies } from './dependencies.ts';
+import { checkFields } from './fields.ts';
+import { isPublishable, packedFiles } from './packed.ts';
+import { isObject, type Pkg } from './pkg.ts';
+import { normalizeScripts } from './scripts.ts';
 
 export interface Options {
-  bin?: string[];
-  fields?: string[];
+  bin?: string[] | undefined;
+  fields?: string[] | undefined;
+  // Also check that paths are in the files npm will publish; defaults to true
+  published?: boolean | undefined;
 }
 
 // Main function
-export function pkgOk(dir: string, { fields = [], bin = [] }: Options = {}) {
+export function pkgOk(
+  dir: string,
+  { fields = [], bin = [], published = true }: Options = {},
+): void {
   const pkgPath = join(dir, 'package.json');
-  const pkg = JSON.parse(readFileSync(pkgPath).toString());
+  const json: unknown = JSON.parse(readFileSync(pkgPath, 'utf8'));
+  if (!isObject(json) || Array.isArray(json)) {
+    throw new Error(`${pkgPath} must contain a JSON object`);
+  }
+  const pkg = json as Pkg;
 
   // Check files exist in package.json fields and additional fields
-  const errors = [...checkFields(pkg, dir, fields), ...checkDependencies(pkg, dir)];
+  const packed = published && isPublishable(pkg) ? packedFiles(dir) : undefined;
+  const errors = [...checkFields(pkg, dir, fields, packed), ...checkDependencies(pkg, dir)];
 
   if (errors.length) {
     throw new Error(errors.join('\n'));

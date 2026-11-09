@@ -1,13 +1,32 @@
-import { beforeAll, describe, expect, it } from '@jest/globals';
-import { execFile } from 'child_process';
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
+import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { before, describe, it } from 'node:test';
+import { fileURLToPath } from 'node:url';
+
+const BIN = fileURLToPath(new URL('../dist/bin.js', import.meta.url));
 
 let directory = '';
 
+function runIn(
+  cwd: string,
+  ...args: string[]
+): Promise<{ code: number; stdout: string; stderr: string }> {
+  return new Promise((resolve) => {
+    execFile('node', [BIN, ...args], { cwd }, (error, stdout, stderr) => {
+      resolve({ code: typeof error?.code === 'number' ? error.code : 0, stdout, stderr });
+    });
+  });
+}
+
+function run(...args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
+  return runIn(process.cwd(), ...args);
+}
+
 describe('pkg-ok', () => {
-  beforeAll(() => {
+  before(() => {
     directory = mkdtempSync(join(tmpdir(), 'pkg-ok-'));
     mkdirSync(join(directory, 'A'));
     writeFileSync(
@@ -84,62 +103,106 @@ describe('pkg-ok', () => {
       }),
     );
     writeFileSync(join(directory, 'G/dist/lib.cjs.js'), './dist/lib.cjs.browser.js');
-  });
-
-  it('checks /A', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'A')], (_error, stdout) => {
-      expect(stdout).toMatch(
-        /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
-      );
-      done();
-    });
-  });
-
-  it('checks /B', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'B')], (_error, stdout) => {
-      expect(stdout).toMatch(/bin\.X[\s\S]*bin\.Y/);
-      done();
-    });
-  });
-
-  it('checks /C', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'C'), '--field', 'foo'], (_error, stdout) => {
-      expect(stdout).toMatch(/foo/);
-      done();
-    });
-  });
-
-  it('checks /D', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'D'), '--field', 'foo'], (_error, stdout) => {
-      expect(stdout).toMatch(/foo\.bar[\s\S]*foo\.baz/);
-      done();
-    });
-  });
-
-  it('checks /E', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'E'), '--bin', 'another-script.js'], () => {
-      expect(readFileSync(join(directory, '/E/script.js'), 'utf-8')).toEqual('foo\nbar');
-      expect(readFileSync(join(directory, '/E/another-script.js'), 'utf-8')).toEqual('baz\nqux');
-      done();
-    });
-  });
-
-  it('checks /F', (done) => {
-    execFile('node', ['dist/bin.js', join(directory, 'F'), '--bin', 'another-script.js'], () => {
-      expect(readFileSync(join(directory, '/F/dist/lib.cjs.browser.js'), 'utf-8')).toEqual('cjs');
-      expect(readFileSync(join(directory, '/F/dist/lib.esm.browser.js'), 'utf-8')).toEqual('esm');
-      done();
-    });
-  });
-
-  it('checks /G', (done) => {
-    execFile(
-      'node',
-      ['dist/bin.js', join(directory, 'G'), '--bin', 'another-script.js'],
-      (_error, stdout) => {
-        expect(stdout).toMatch(/browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/);
-        done();
-      },
+    for (const name of ['M/packages/x', 'M/packages/y', 'M/node_modules/z']) {
+      mkdirSync(join(directory, name), { recursive: true });
+    }
+    writeFileSync(join(directory, 'M/packages/x/package.json'), '{}');
+    writeFileSync(join(directory, 'M/packages/y/package.json'), '{}');
+    writeFileSync(join(directory, 'M/node_modules/z/package.json'), '{"main": "missing.js"}');
+    mkdirSync(join(directory, 'P/lib'), { recursive: true });
+    writeFileSync(
+      join(directory, 'P/package.json'),
+      JSON.stringify({ name: 'p', version: '1.0.0', files: ['dist'], main: './lib/index.js' }),
     );
+    writeFileSync(join(directory, 'P/lib/index.js'), '');
+  });
+
+  it('checks /A', async () => {
+    const { code, stdout, stderr } = await run(join(directory, 'A'));
+    assert.equal(code, 1);
+    assert.equal(stdout, '');
+    assert.match(
+      stderr,
+      /main[\s\S]*bin[\s\S]*types[\s\S]*typings[\s\S]*module[\s\S]*es2015[\s\S]*browser[\s\S]*exports/,
+    );
+  });
+
+  it('checks /B', async () => {
+    const { code, stderr } = await run(join(directory, 'B'));
+    assert.equal(code, 1);
+    assert.match(stderr, /bin\.X[\s\S]*bin\.Y/);
+  });
+
+  it('checks /C', async () => {
+    const { code, stderr } = await run(join(directory, 'C'), '--field', 'foo');
+    assert.equal(code, 1);
+    assert.match(stderr, /foo/);
+  });
+
+  it('checks /D', async () => {
+    const { code, stderr } = await run(join(directory, 'D'), '--field', 'foo');
+    assert.equal(code, 1);
+    assert.match(stderr, /foo\.bar[\s\S]*foo\.baz/);
+  });
+
+  it('checks /E', async () => {
+    const { code, stdout, stderr } = await run(join(directory, 'E'), '--bin', 'another-script.js');
+    assert.equal(code, 0);
+    assert.match(stdout, /Package ok/);
+    assert.equal(stderr, '');
+    assert.equal(readFileSync(join(directory, '/E/script.js'), 'utf-8'), 'foo\nbar');
+    assert.equal(readFileSync(join(directory, '/E/another-script.js'), 'utf-8'), 'baz\nqux');
+  });
+
+  it('checks /F', async () => {
+    await run(join(directory, 'F'), '--bin', 'another-script.js');
+    assert.equal(readFileSync(join(directory, '/F/dist/lib.cjs.browser.js'), 'utf-8'), 'cjs');
+    assert.equal(readFileSync(join(directory, '/F/dist/lib.esm.browser.js'), 'utf-8'), 'esm');
+  });
+
+  it('checks /G', async () => {
+    const { code, stderr } = await run(join(directory, 'G'), '--bin', 'another-script.js');
+    assert.equal(code, 1);
+    assert.match(stderr, /browser.*path[\s\S]*browser.*path[\s\S]*browser.*must/);
+  });
+
+  it('checks a package.json path', async () => {
+    const { code, stdout } = await run(join(directory, 'E/package.json'));
+    assert.equal(code, 0);
+    assert.match(stdout, /^Package ok$/m);
+  });
+
+  it('checks several packages and reports each one', async () => {
+    const { code, stdout, stderr } = await runIn(directory, 'A', 'E');
+    assert.equal(code, 1);
+    assert.match(stderr, /^A: pkg-ok error$/m);
+    assert.match(stdout, /^E: Package ok$/m);
+  });
+
+  it('expands globs and skips node_modules', async () => {
+    const { code, stdout, stderr } = await runIn(join(directory, 'M'), '**/package.json');
+    assert.equal(code, 0);
+    assert.equal(stderr, '');
+    assert.match(stdout, /^packages[\\/]x: Package ok$/m);
+    assert.match(stdout, /^packages[\\/]y: Package ok$/m);
+    assert.doesNotMatch(stdout, /node_modules/);
+  });
+
+  it('fails when a glob matches no packages', async () => {
+    const { code, stderr } = await runIn(directory, 'missing/*');
+    assert.equal(code, 1);
+    assert.match(stderr, /missing\/\* matched no packages/);
+  });
+
+  it('reports paths that are not published', async () => {
+    const { code, stderr } = await run(join(directory, 'P'));
+    assert.equal(code, 1);
+    assert.match(stderr, /main path exists but isn't published/);
+  });
+
+  it('skips the published check with --no-published', async () => {
+    const { code, stdout } = await run(join(directory, 'P'), '--no-published');
+    assert.equal(code, 0);
+    assert.match(stdout, /^Package ok$/m);
   });
 });

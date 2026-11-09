@@ -3,6 +3,7 @@
 > `pkg-ok` checks paths and scripts defined in `package.json` before you publish 👌
 
 - Ensures paths defined in `main`, `bin`, `module`, `types`, `typings`, `es2015`, `browser`, and `exports` exist
+- Ensures those paths will be published, so they aren't left out by `files` or `.npmignore`
 - Checks direct `dependencies`, `optionalDependencies`, and `peerDependencies` for local project links
   (package-manager store links are ignored)
 - Ensures paths defined in `main`, `bin`, and `browser` are relative
@@ -42,6 +43,15 @@ Check the `package.json` in a specific directory.
 
 ```sh
 pkg-ok some/directory
+pkg-ok some/directory/package.json
+```
+
+Check several packages, such as in a monorepo. Quote globs so `pkg-ok` expands them; `node_modules` is skipped and `.gitignore` is not read.
+
+```sh
+pkg-ok . packages/a packages/b
+pkg-ok 'packages/*'
+pkg-ok '**/package.json'
 ```
 
 Check additional `package.json` fields or bin files.
@@ -50,12 +60,18 @@ Check additional `package.json` fields or bin files.
 pkg-ok --field someField --bin script.sh
 ```
 
+The published check runs `npm pack --dry-run --ignore-scripts`, so npm must be installed. It's skipped for `private` packages and packages without a `name` or `version`. Turn it off with `--no-published`.
+
+```sh
+pkg-ok --no-published
+```
+
 ## API
 
 ```js
-const pkgDirectory = __dirname;
+import { pkgOk } from 'pkg-ok';
 
-pkgOk(pkgDirectory, {
+pkgOk(process.cwd(), {
   fields: ['someAdditonalField'],
   bin: ['someAdditionalScript.sh'],
 });

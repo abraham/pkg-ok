@@ -1,7 +1,7 @@
-import { lstatSync, realpathSync } from 'fs';
-import { join } from 'path';
-import { linkedDependencyError } from './errors.js';
-import { isObject, Pkg } from './pkg.js';
+import { lstatSync, realpathSync } from 'node:fs';
+import { join } from 'node:path';
+import { linkedDependencyError } from './errors.ts';
+import { isObject, type Pkg } from './pkg.ts';
 
 const dependencyFields: readonly (keyof Pkg)[] = [
   'dependencies',
@@ -62,7 +62,7 @@ function dependencyEntryPaths(dir: string, name: string): string[] {
 
   const nodeModules = join(dir, 'node_modules');
   if (name.startsWith('@')) {
-    return [join(nodeModules, parts[0]), join(nodeModules, name)];
+    return [join(nodeModules, name.slice(0, name.indexOf('/'))), join(nodeModules, name)];
   }
   return [join(nodeModules, name)];
 }

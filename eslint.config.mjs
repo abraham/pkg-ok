@@ -1,13 +1,27 @@
 import js from '@eslint/js';
-import tsEslintPlugin from '@typescript-eslint/eslint-plugin';
-import tsEslintParser from '@typescript-eslint/parser';
+import { defineConfig } from 'eslint/config';
 import eslintConfigPrettier from 'eslint-config-prettier';
-import jest from 'eslint-plugin-jest';
+import nodePlugin from 'eslint-plugin-n';
 import globals from 'globals';
+import { fileURLToPath } from 'node:url';
+import tseslint from 'typescript-eslint';
 
-export default [
+export default defineConfig(
   {
     ignores: ['dist'],
+  },
+  nodePlugin.configs['flat/recommended-module'],
+  {
+    settings: {
+      n: {
+        convertPath: { 'src/**/*.ts': ['^src/(.+)\\.ts$', 'dist/$1.js'] },
+      },
+    },
+    rules: {
+      'n/no-missing-import': ['error', { ignoreTypeImport: true }],
+      'n/no-unpublished-import': ['error', { ignoreTypeImport: true }],
+      'n/prefer-node-protocol': 'error',
+    },
   },
   {
     files: ['**/*.{cjs,mjs,js}'],
@@ -23,34 +37,28 @@ export default [
   },
   {
     files: ['**/*.ts'],
+    extends: [tseslint.configs.strictTypeChecked, tseslint.configs.stylisticTypeChecked],
     languageOptions: {
-      parser: tsEslintParser,
-      ecmaVersion: 'latest',
-      sourceType: 'module',
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: fileURLToPath(new URL('.', import.meta.url)),
+      },
       globals: {
         ...globals.node,
       },
     },
-    plugins: {
-      '@typescript-eslint': tsEslintPlugin,
-    },
     rules: {
-      ...tsEslintPlugin.configs.recommended.rules,
-    },
-  },
-  {
-    files: ['**/*.test.ts'],
-    plugins: {
-      jest,
-    },
-    languageOptions: {
-      globals: jest.environments.globals.globals,
-    },
-    rules: {
-      ...jest.configs['flat/recommended'].rules,
-      'jest/no-alias-methods': 'off',
-      'jest/no-done-callback': 'off',
+      // Allows the assert.throws(() => fn()) idiom
+      '@typescript-eslint/no-confusing-void-expression': ['error', { ignoreArrowShorthand: true }],
+      '@typescript-eslint/no-floating-promises': [
+        'error',
+        {
+          allowForKnownSafeCalls: [
+            { from: 'package', package: 'node:test', name: ['describe', 'it', 'suite', 'test'] },
+          ],
+        },
+      ],
     },
   },
   eslintConfigPrettier,
-];
+);
